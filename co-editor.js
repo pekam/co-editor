@@ -1,4 +1,5 @@
-import './node_modules/quill/dist/quill.min.js';
+import './vendor/vaadin-quill.min.js';
+import './node_modules/quill-cursors/dist/quill-cursors.min.js';
 
 class CoEditor extends HTMLElement {
   constructor() {
@@ -8,9 +9,11 @@ class CoEditor extends HTMLElement {
 
     this.shadowRoot.innerHTML = `
       <link href="//cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+      <link rel="stylesheet" href="/node_modules/quill-cursors/dist/quill-cursors.css">
       <style>
         :host {
           display: block;
+          border: 1px solid lightgrey;
         }
       </style>
       <div id="editor-container"></div>
@@ -18,13 +21,28 @@ class CoEditor extends HTMLElement {
 
     const container = this.shadowRoot.querySelector('#editor-container');
 
+    Quill.register('modules/cursors', QuillCursors);
     this._quill = new Quill(container, {
       modules: {
-        toolbar: false
+        toolbar: false,
+        cursors: true
       },
-      formats: [],
-      theme: 'snow'
+      formats: []
     });
+
+    this._cursors = this._quill.getModule('cursors');
+    this._cursors.setCursor(
+      '1', /* userId */
+      {index: 0, length: 0}, /* range */
+      'User 1', /* name */
+      'red' /* color */
+    );
+
+    this._quill.on('selection-change', function(range, oldRange, source) {
+      if (!range || range.index === 0) return;
+      range.index = 0;
+      this._cursors.moveCursor('1', range);
+    }.bind(this));
 
     this._quill.on('text-change', function (delta, oldDelta, source) {
       if (source === 'user') {
