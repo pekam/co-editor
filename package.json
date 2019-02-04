@@ -4,8 +4,12 @@
   "description": "",
   "main": "co-editor.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "owc-dev-server"
+    "test": "karma start",
+    "start": "owc-dev-server",
+    "test:watch": "karma start --auto-watch=true --single-run=false",
+    "test:es5": "karma start karma.es5.config.js",
+    "test:es5:watch": "karma start karma.es5.config.js --auto-watch=true --single-run=false",
+    "test:es5:bs": "karma start karma.es5.bs.config.js"
   },
   "author": "",
   "license": "ISC",
@@ -14,6 +18,12 @@
     "quill-cursors": "^1.0.3"
   },
   "devDependencies": {
-    "owc-dev-server": "^0.1.2"
+    "@open-wc/testing": "^0.9.0",
+    "@open-wc/testing-karma": "^0.4.0",
+    "@open-wc/testing-karma-bs": "^0.2.0",
+    "karma": "^4.0.0",
+    "lit-html": "^1.0.0-rc.2",
+    "owc-dev-server": "^0.1.2",
+    "webpack-merge": "^4.1.5"
   }
 }
