@@ -33,15 +33,16 @@ class CoEditor extends HTMLElement {
     this._cursors = this._quill.getModule('cursors');
     this._cursors.setCursor(
       '1', /* userId */
-      {index: 0, length: 0}, /* range */
+      { index: 0, length: 0 }, /* range */
       'User 1', /* name */
       'red' /* color */
     );
 
-    this._quill.on('selection-change', function(range, oldRange, source) {
-      if (!range || range.index === 0) return;
-      range.index = 0;
-      this._cursors.moveCursor('1', range);
+    this._quill.on('selection-change', function (range, oldRange, source) {
+      range && this.send({
+        type: 'cursor',
+        range: range
+      });
     }.bind(this));
 
     this._quill.on('text-change', function (delta, oldDelta, source) {
@@ -65,7 +66,6 @@ class CoEditor extends HTMLElement {
           index: index,
           text: op.insert
         });
-        // this.send(`INSERT[${index}, ${op.insert}]`);
 
         // When having selected text and inserting, the insert comes before the delete
         // so the index needs to be shifted 
@@ -78,7 +78,6 @@ class CoEditor extends HTMLElement {
           index: index,
           length: op.delete
         });
-        // this.send(`DELETE[${index}, ${op.delete}]`);
       }
     });
   }
@@ -91,8 +90,18 @@ class CoEditor extends HTMLElement {
     console.log(operation);
     if (operation.type === 'insert') {
       this._quill.insertText(operation.index, operation.text);
+      this._cursors.moveCursor('1', {
+        index: operation.index + operation.text.length,
+        length: 0
+      });
     } else if (operation.type === 'delete') {
       this._quill.deleteText(operation.index, operation.length);
+      this._cursors.moveCursor('1', {
+        index: operation.index,
+        length: 0
+      });
+    } else if (operation.type === 'cursor') {
+      this._cursors.moveCursor('1', operation.range);
     }
   }
 }
