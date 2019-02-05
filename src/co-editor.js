@@ -1,7 +1,8 @@
 import '../vendor/vaadin-quill.min.js';
 import '../node_modules/quill-cursors/dist/quill-cursors.min';
+import OtMixin from './ot-mixin.js';
 
-class CoEditor extends HTMLElement {
+class CoEditor extends OtMixin(HTMLElement) {
   constructor() {
     super();
 
@@ -25,7 +26,8 @@ class CoEditor extends HTMLElement {
     this._quill = new Quill(container, {
       modules: {
         toolbar: false,
-        cursors: true
+        cursors: true,
+        history: {maxStack: 0} // Disabling undo/redo
       },
       formats: []
     });
@@ -48,6 +50,7 @@ class CoEditor extends HTMLElement {
     this._quill.on('text-change', function (delta, oldDelta, source) {
       if (source === 'user') {
         this._textChanged(delta.ops);
+        console.log(this._quill.getContents().diff(oldDelta));
       }
     }.bind(this));
   }
@@ -88,20 +91,27 @@ class CoEditor extends HTMLElement {
 
   receive(operation) {
     console.log(operation);
+    this._doExecute(operation);
     if (operation.type === 'insert') {
-      this._quill.insertText(operation.index, operation.text);
       this._cursors.moveCursor('1', {
         index: operation.index + operation.text.length,
         length: 0
       });
     } else if (operation.type === 'delete') {
-      this._quill.deleteText(operation.index, operation.length);
       this._cursors.moveCursor('1', {
         index: operation.index,
         length: 0
       });
     } else if (operation.type === 'cursor') {
       this._cursors.moveCursor('1', operation.range);
+    }
+  }
+
+  _doExecute(operation) {
+    if (operation.type === 'insert') {
+      this._quill.insertText(operation.index, operation.text);
+    } else if (operation.type === 'delete') {
+      this._quill.deleteText(operation.index, operation.length);
     }
   }
 }
