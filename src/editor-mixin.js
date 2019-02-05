@@ -42,38 +42,30 @@ export default function (superClass) {
           return;
         }
 
-        let index = 0;
-        delta.ops.forEach(op => {
+        // Transforms the changes to a simpler format in a single object:
+        // { retain: number, insert: string, delete: number }
+        const ops = delta.ops.reduce((acc, op) => Object.assign(acc, op), {});
 
-          if (op.retain) {
-            index += op.retain;
-          }
+        const index = ops.retain || 0;
 
-          else if (op.insert) { // Contains the string to insert
-            this._onUserInput({
-              type: 'insert',
-              index: index,
-              text: op.insert
-            });
+        if (ops.delete) {
+          const oldText = oldDelta.ops[0].insert;
+          const deletedText = oldText.substring(index, index + ops.delete);
 
-            // When having selected text and inserting, the insert comes before the delete
-            // so the index needs to be shifted 
-            index += op.insert.length;
-          }
+          this._onUserInput({
+            type: 'delete',
+            index: index,
+            text: deletedText
+          });
+        }
 
-          else if (op.delete) { // Contains the length of deletion
-            const deletedText = this._quill.getContents()
-              .diff(oldDelta).ops
-              .find(e => e.insert).insert;
-
-            this._onUserInput({
-              type: 'delete',
-              index: index,
-              // length: op.delete,
-              text: deletedText
-            });
-          }
-        });
+        if (ops.insert) {
+          this._onUserInput({
+            type: 'insert',
+            index: index,
+            text: ops.insert
+          });
+        }
       }.bind(this));
     }
 
