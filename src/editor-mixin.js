@@ -69,7 +69,7 @@ export default function (superClass) {
             this._onUserInput({
               type: 'delete',
               index: index,
-              length: op.delete,
+              // length: op.delete,
               text: deletedText
             });
           }
@@ -85,7 +85,7 @@ export default function (superClass) {
           length: 0
         });
       } else if (operation.type === 'delete') {
-        this._quill.deleteText(operation.index, operation.length);
+        this._quill.deleteText(operation.index, operation.text.length);
         this._cursors.moveCursor('1', {
           index: operation.index,
           length: 0
