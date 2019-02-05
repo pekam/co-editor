@@ -4,7 +4,7 @@ import {
   expect,
 } from '@open-wc/testing';
 
-import '../co-editor';
+import '../src/co-editor';
 
 describe('<co-editor>', () => {
   

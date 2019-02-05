@@ -1,5 +1,5 @@
-import './vendor/vaadin-quill.min.js';
-import './node_modules/quill-cursors/dist/quill-cursors.min.js';
+import '../vendor/vaadin-quill.min.js';
+import '../node_modules/quill-cursors/dist/quill-cursors.min';
 
 class CoEditor extends HTMLElement {
   constructor() {
