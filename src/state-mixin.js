@@ -1,10 +1,11 @@
 export default function (superClass) {
   return class StateMixin extends superClass {
 
-    _sv = {}; // State vector
-
     constructor() {
       super();
+
+      this._sv = {}; // State vector
+
       if (this._isMaster()) {
         this._nextId = 0;
         this._id = this._generateId();

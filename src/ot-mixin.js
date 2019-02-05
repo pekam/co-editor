@@ -1,8 +1,11 @@
 export default function (superClass) {
   return class OtMixin extends superClass {
 
-    _hb = []; // History buffer
-    _queue = [];
+    constructor() {
+      super();
+      this._hb = []; // History buffer
+      this._queue = [];
+    }
 
     _remoteOperationReceived(op) {
       if (this._isCausallyReady(op)) {
