@@ -68,6 +68,11 @@ export default function (superClass) {
       this._sv = message.sv;
       this._setText(message.text);
 
+      // Remove from queue operations which are
+      // already effective in the initial text
+      this._queue = this._queue.filter(op =>
+        op.sv[op.clientId] > this._sv[op.clientId]);
+
       this._joined = true;
       this._enable();
     }
