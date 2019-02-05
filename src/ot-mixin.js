@@ -1,7 +1,6 @@
 export default function(superClass) {
   return class OtMixin extends superClass {
 
-    _sv = {}; // State vector
     _hb = []; // History buffer
 
     _undo(op) {

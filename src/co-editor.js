@@ -1,22 +1,8 @@
 import OtMixin from './ot-mixin.js';
 import EditorMixin from './editor-mixin';
+import StateMixin from './state-mixin';
 
-class CoEditor extends OtMixin(EditorMixin(HTMLElement)) {
-  constructor() {
-    super();
-
-    this.attachShadow({ mode: 'open' });
-
-    this.shadowRoot.innerHTML = `
-      <style>
-        :host {
-          display: block;
-          border: 1px solid lightgrey;
-        }
-      </style>
-      `;
-    this._initEditor();
-  }
+class CoEditor extends OtMixin(StateMixin(EditorMixin(HTMLElement))) {
 
   _onUserInput(operation) {
     this.send(operation);
@@ -32,7 +18,21 @@ class CoEditor extends OtMixin(EditorMixin(HTMLElement)) {
 
   receive(operation) {
     console.log(operation);
-    this._doExecute(operation);
+    switch(operation.type) {
+
+      case 'join':
+        this._joinSession(operation);
+        break;
+
+      case 'insert':
+      case 'delete':
+      case 'cursor':
+        this._doExecute(operation);
+        break;
+
+      default:
+        throw new Error(`Unhandled message type ${operation.type}`);
+    }
   }
 }
 customElements.define('co-editor', CoEditor);

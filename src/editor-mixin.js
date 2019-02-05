@@ -4,8 +4,17 @@ import '../node_modules/quill-cursors/dist/quill-cursors.min';
 export default function (superClass) {
   return class EditorMixin extends superClass {
 
-    _initEditor() {
-      this.shadowRoot.innerHTML += `
+    constructor() {
+      super();
+
+      this.attachShadow({ mode: 'open' });
+      this.shadowRoot.innerHTML = `
+        <style>
+          :host {
+            display: block;
+            border: 1px solid lightgrey;
+          }
+        </style>
         <link href="//cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
         <link rel="stylesheet" href="/node_modules/quill-cursors/dist/quill-cursors.css">
         <div id="editor-container"></div>
@@ -67,6 +76,22 @@ export default function (superClass) {
           });
         }
       }.bind(this));
+    }
+
+    getText() {
+      return this._quill.getText();
+    }
+
+    _setText(text) {
+      this._quill.setText(text);
+    }
+
+    _disable() {
+      this._quill.disable();
+    }
+
+    _enable() {
+      this._quill.enable();
     }
 
     _doExecute(operation) {

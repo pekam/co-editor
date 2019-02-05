@@ -14,8 +14,9 @@
   <script src="src/co-editor.js" type="module"></script>
 </head>
 <body>
-  <co-editor id="one" style="height:300px;"></co-editor>
+  <co-editor master id="one" style="height:300px;"></co-editor>
   <co-editor id="two" style="height:300px;"></co-editor>
+  <button id="join">Join session</button>
 
   <script>
     const first = document.querySelector('#one');
@@ -23,6 +24,10 @@
 
     first.send = op => second.receive(op);
     second.send = op => first.receive(op);
+
+    document.querySelector("#join").addEventListener('click', e => {
+      second.receive(first.generateJoinMessage());
+    });
 
   </script>
 </body>
