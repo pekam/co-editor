@@ -5,6 +5,9 @@ import StateMixin from './state-mixin';
 class CoEditor extends OtMixin(StateMixin(EditorMixin(HTMLElement))) {
 
   _onUserInput(operation) {
+    this._sv[this._id]++;
+    operation.sv = Object.assign({}, this._sv);
+    operation.clientId = this._id;
     this.send(operation);
   }
 
@@ -26,6 +29,9 @@ class CoEditor extends OtMixin(StateMixin(EditorMixin(HTMLElement))) {
 
       case 'insert':
       case 'delete':
+        this._remoteOperationReceived(operation);
+        break;
+
       case 'cursor':
         this._doExecute(operation);
         break;

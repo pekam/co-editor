@@ -1,7 +1,33 @@
-export default function(superClass) {
+export default function (superClass) {
   return class OtMixin extends superClass {
 
     _hb = []; // History buffer
+    _queue = [];
+
+    _remoteOperationReceived(op) {
+      if (this._isCausallyReady(op)) {
+        this._integrateRemoteOperation(op);
+        this._checkQueue();
+      } else {
+        this._queue.push(op);
+      }
+    }
+
+    _integrateRemoteOperation(op) {
+      const transformed = this._transform(op);
+      this._doExecute(transformed);
+      this._sv[op.clientId]++;
+      this._hb.push(transformed);
+    }
+
+    _checkQueue() {
+      this._queue.filter(op => this._isCausallyReady(op))
+        .forEach(op => this._integrateRemoteOperation(op));
+    }
+
+    _transform(op) {
+      return op;
+    }
 
     _undo(op) {
       if (op.type === 'insert') {

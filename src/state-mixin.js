@@ -18,9 +18,17 @@ export default function (superClass) {
       return this.hasAttribute('master');
     }
 
-    // _isCausallyReady(operation) {
-    //   return this._isMaster() || this._joined;
-    // }
+    _isCausallyReady(op) {
+      const clockAhead = Object.keys(op.sv).filter(id => id !== op.clientId.toString())
+        .find(id => op.sv[id] > this._sv[id]);
+
+      console.log('----')
+      console.log(op.sv)
+      console.log(this._sv)
+      console.log('----')
+
+      return !clockAhead && (op.sv[op.clientId] === this._sv[op.clientId] + 1);
+    }
 
     _generateId() {
       return this._nextId++;
@@ -43,7 +51,7 @@ export default function (superClass) {
       return {
         type: 'join',
         id: id,
-        sv: this._sv,
+        sv: Object.assign({}, this._sv),
         text: this.getText()
         // TODO: include caret positions?
       }
