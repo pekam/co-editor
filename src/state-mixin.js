@@ -24,11 +24,6 @@ export default function (superClass) {
       const clockAhead = Object.keys(op.sv).filter(id => id !== op.clientId.toString())
         .find(id => op.sv[id] > this._sv[id]);
 
-      console.log('----')
-      console.log(op.sv)
-      console.log(this._sv)
-      console.log('----')
-
       return !clockAhead && (op.sv[op.clientId] === this._sv[op.clientId] + 1);
     }
 

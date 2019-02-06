@@ -16,10 +16,10 @@ export default function (superClass) {
     }
 
     _integrateRemoteOperation(op) {
-      const transformed = this._transform(op);
-      this._doExecute(transformed);
+      this.__undoDoRedo(op);
+
       this._sv[op.clientId]++;
-      this._hb.push(transformed);
+      this._hb.push(op);
 
       this._checkQueue();
     }
@@ -29,11 +29,29 @@ export default function (superClass) {
       causallyReadyOp && this._integrateRemoteOperation(causallyReadyOp);
     }
 
-    _transform(op) {
-      return op;
+    __undoDoRedo(op) {
+      const subsequentOps = this.__getSubsequentOps(op);
+
+      subsequentOps.reverse().forEach(this.__undo);
+      this._doExecute(op);
+      subsequentOps.reverse().forEach(this._doExecute);
     }
 
-    _undo(op) {
+    __getSubsequentOps(op) {
+      const sumSv = sv => Object.values(sv).reduce((sum, clock) => sum + clock);
+      const opSum = sumSv(op.sv);
+
+      return this._hb.filter(oldOp => {
+        const oldOpSum = sumSv(oldOp.sv);
+        if (opSum === oldOpSum) {
+          return oldOp.clientId > op.clientId;
+        } else {
+          return oldOpSum > opSum;
+        }
+      });
+    }
+
+    __undo(op) {
       if (op.type === 'insert') {
         this._doExecute({
           type: 'delete',
