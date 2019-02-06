@@ -19,6 +19,10 @@ export default function (superClass) {
       return this.hasAttribute('master');
     }
 
+    _isActive() {
+      return this._isMaster() || this._joined;
+    }
+
     _isCausallyReady(op) {
       const clockAhead = Object.keys(op.sv).filter(id => id !== op.clientId.toString())
         .find(id => op.sv[id] > this._sv[id]);

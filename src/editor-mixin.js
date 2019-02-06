@@ -30,19 +30,13 @@ export default function (superClass) {
         },
         formats: []
       });
-
       this._cursors = this._quill.getModule('cursors');
-      this._cursors.setCursor(
-        '1', /* userId */
-        { index: 0, length: 0 }, /* range */
-        'User 1', /* name */
-        'red' /* color */
-      );
 
       this._quill.on('selection-change', function (range, oldRange, source) {
         range && this._onUserSelectionChange({
           type: 'cursor',
-          range: range
+          index: range.index,
+          length: range.length
         });
       }.bind(this));
 
@@ -94,22 +88,43 @@ export default function (superClass) {
       this._quill.enable();
     }
 
-    _doExecute(operation) {
-      if (operation.type === 'insert') {
-        this._quill.insertText(operation.index, operation.text);
-        this._cursors.moveCursor('1', {
-          index: operation.index + operation.text.length,
-          length: 0
-        });
-      } else if (operation.type === 'delete') {
-        this._quill.deleteText(operation.index, operation.text.length);
-        this._cursors.moveCursor('1', {
-          index: operation.index,
-          length: 0
-        });
-      } else if (operation.type === 'cursor') {
-        this._cursors.moveCursor('1', operation.range);
+    _doExecute(op) {
+      switch (op.type) {
+
+        case 'insert':
+          this._quill.insertText(op.index, op.text);
+          this.__updateCaret(op.clientId, op.name, op.index + op.text.length, 0);
+          break;
+
+        case 'delete':
+          this._quill.deleteText(op.index, op.text.length);
+          this.__updateCaret(op.clientId, op.name, op.index, 0);
+          break;
+
+        case 'cursor':
+          this.__updateCaret(op.clientId, op.name, op.index, op.length);
+          break;
       }
+    }
+
+    __updateCaret(id, name, index, length) {
+      if (Object.values(this._cursors.cursors).find(cursor => cursor.userId === id)) {
+        this._cursors.moveCursor(id, { index: index, length: length });
+      } else {
+        this._cursors.setCursor(
+          id, { index: index, length: length },
+          name, this.__getRandomColor()
+        );
+      }
+    }
+
+    __getRandomColor() {
+      var letters = '0123456789ABCDEF';
+      var color = '#';
+      for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
     }
   }
 }
