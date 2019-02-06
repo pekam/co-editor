@@ -36,7 +36,7 @@ class CoEditor extends OtMixin(StateMixin(EditorMixin(HTMLElement))) {
   }
 
   receive(operation) {
-    console.log(operation);
+    // console.log(operation);
     switch (operation.type) {
 
       case 'join':

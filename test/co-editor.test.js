@@ -9,6 +9,7 @@ import '../src/co-editor';
 describe('<co-editor>', () => {
 
   let first, second;
+  let delay;
 
   beforeEach(async () => {
     const parent = await fixture(html`
@@ -22,8 +23,13 @@ describe('<co-editor>', () => {
 
     second.receive(first.generateJoinMessage());
 
-    first.send = op => second.receive(op);
-    second.send = op => first.receive(op);
+    first.send = op => delay ?
+      setTimeout(() => second.receive(op), delay)
+      : second.receive(op);
+
+    second.send = op => delay ?
+      setTimeout(() => first.receive(op), delay)
+      : first.receive(op);
   });
 
   const insertText = (editor, index, text) =>
@@ -32,7 +38,7 @@ describe('<co-editor>', () => {
     editor._quill.deleteText(index, length, 'user');
 
   const expectText = (editor, text) =>
-    // For some reason quill adds newline
+    // Quill inserts a newline to the end
     expect(editor._quill.getText()).to.equal(text + '\n');
 
   const expectTexts = text => {
@@ -49,5 +55,16 @@ describe('<co-editor>', () => {
     insertText(first, 0, 'foobar');
     deleteText(first, 2, 3);
     expectTexts('for');
+  });
+
+  it('should converge on concurrent inserts', done => {
+    delay = 50;
+    insertText(first, 0, 'foo');
+    insertText(second, 0, 'bar');
+
+    setTimeout(() => {
+      expectTexts('barfoo');
+      done();
+    }, 100);
   });
 });

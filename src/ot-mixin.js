@@ -32,9 +32,9 @@ export default function (superClass) {
     __undoDoRedo(op) {
       const subsequentOps = this.__getSubsequentOps(op);
 
-      subsequentOps.reverse().forEach(this.__undo);
+      subsequentOps.reverse().forEach(this.__undo.bind(this));
       this._doExecute(op);
-      subsequentOps.reverse().forEach(this._doExecute);
+      subsequentOps.reverse().forEach(this._doExecute.bind(this));
     }
 
     __getSubsequentOps(op) {
@@ -52,6 +52,7 @@ export default function (superClass) {
     }
 
     __undo(op) {
+      console.log('undoing ', op);
       if (op.type === 'insert') {
         this._doExecute({
           type: 'delete',
