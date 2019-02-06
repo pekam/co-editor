@@ -32,6 +32,11 @@ describe('<co-editor>', () => {
       : first.receive(op);
   });
 
+  const setInitialText = text => {
+    first._quill.setText(text, 'api');
+    second._quill.setText(text, 'api');
+  }
+
   const insertText = (editor, index, text) =>
     editor._quill.insertText(index, text, 'user');
   const deleteText = (editor, index, length) =>
@@ -39,7 +44,10 @@ describe('<co-editor>', () => {
 
   const expectText = (editor, text) =>
     // Quill inserts a newline to the end
-    expect(editor._quill.getText()).to.equal(text + '\n');
+    expect(editor.getText()).to.equal(text + '\n');
+
+  const expectConvergence = () =>
+    expect(first.getText()).to.equal(second.getText());
 
   const expectTexts = text => {
     expectText(first, text);
@@ -57,14 +65,48 @@ describe('<co-editor>', () => {
     expectTexts('for');
   });
 
-  it('should converge on concurrent inserts', done => {
-    delay = 50;
-    insertText(first, 0, 'foo');
-    insertText(second, 0, 'bar');
+  describe('concurrent convergence', function () {
+    this.timeout(5000);
+    beforeEach(() => {
+      delay = 1000;
+    });
 
-    setTimeout(() => {
-      expectTexts('barfoo');
-      done();
-    }, 100);
+    it('should converge on concurrent inserts', done => {
+      insertText(first, 0, 'foo');
+      insertText(second, 0, 'bar');
+
+      setTimeout(() => {
+        expectTexts('barfoo');
+        done();
+      }, delay * 2);
+    });
+
+    it('should converge on concurrent deletes', done => {
+      setInitialText('foobar');
+
+      deleteText(first, 0, 1);
+      deleteText(second, 2, 2);
+
+      setTimeout(() => {
+        // Not checking the actual values, as not
+        // verifying intention-preservation yet
+        expectConvergence();
+        done();
+      }, delay * 2);
+    });
+
+    it('should converge on concurrent insert and delete', done => {
+      setInitialText('foobar');
+
+      insertText(first, 3, 'qux');
+      deleteText(second, 2, 2);
+
+      setTimeout(() => {
+        // Not checking the actual values, as not
+        // verifying intention-preservation yet
+        expectConvergence();
+        done();
+      }, delay * 2);
+    });
   });
 });

@@ -20,6 +20,8 @@
 
     first.send = op => second.receive(op);
     second.send = op => first.receive(op);
+    first.send = op => setTimeout(() => second.receive(op), 4000);
+    second.send = op => setTimeout(() => first.receive(op), 4000);
 
     document.querySelector("#join").addEventListener('click', e => {
       second.receive(first.generateJoinMessage());
