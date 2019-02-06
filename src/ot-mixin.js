@@ -10,7 +10,6 @@ export default function (superClass) {
     _remoteOperationReceived(op) {
       if (this._isCausallyReady(op)) {
         this._integrateRemoteOperation(op);
-        this._checkQueue();
       } else {
         this._queue.push(op);
       }
@@ -21,11 +20,13 @@ export default function (superClass) {
       this._doExecute(transformed);
       this._sv[op.clientId]++;
       this._hb.push(transformed);
+
+      this._checkQueue();
     }
 
     _checkQueue() {
-      this._queue.filter(op => this._isCausallyReady(op))
-        .forEach(op => this._integrateRemoteOperation(op));
+      const causallyReadyOp = this._queue.find(op => this._isCausallyReady(op));
+      causallyReadyOp && this._integrateRemoteOperation(causallyReadyOp);
     }
 
     _transform(op) {
