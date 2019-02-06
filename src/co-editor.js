@@ -8,6 +8,7 @@ class CoEditor extends OtMixin(StateMixin(EditorMixin(HTMLElement))) {
     this._sv[this._id]++;
     operation.sv = Object.assign({}, this._sv);
     operation.clientId = this._id;
+    this._hb.push(operation);
     this.send(operation);
   }
 
