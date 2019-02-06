@@ -6,7 +6,8 @@ export default function (superClass) {
 
       this._sv = {}; // State vector
 
-      if (this._isMaster()) {
+      if (this.hasAttribute('master')) {
+        this._master = true;
         this._nextId = 0;
         this._id = this._generateId();
         this._sv[this._id] = 0;
@@ -15,12 +16,8 @@ export default function (superClass) {
       }
     }
 
-    _isMaster() {
-      return this.hasAttribute('master');
-    }
-
     _isActive() {
-      return this._isMaster() || this._joined;
+      return this._master || this._joined;
     }
 
     _isCausallyReady(op) {
@@ -44,7 +41,7 @@ export default function (superClass) {
      * another client to join this client's session.
      */
     generateJoinMessage() {
-      if (!this._isMaster()) {
+      if (!this._master) {
         throw new Error('Only a master editor can generate ' +
           'a message for others to join its session. ' +
           'Set the "master" attribute on the editor first.');
@@ -63,7 +60,7 @@ export default function (superClass) {
     }
 
     _joinSession(message) {
-      if (this._isMaster()) {
+      if (this._master) {
         throw new Error('A master editor received a ' +
           'message to join another session. This is not allowed.');
       }
