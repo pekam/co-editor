@@ -34,7 +34,7 @@ export default function (superClass) {
 
       subsequentOps.reverse().forEach(this.__undo.bind(this));
       this._doExecute(op);
-      subsequentOps.reverse().forEach(this._doExecute.bind(this));
+      subsequentOps.reverse().forEach(this._doExecuteInternal.bind(this));
     }
 
     __getSubsequentOps(op) {
@@ -54,13 +54,13 @@ export default function (superClass) {
     __undo(op) {
       console.log('undoing ', op);
       if (op.type === 'insert') {
-        this._doExecute({
+        this._doExecuteInternal({
           type: 'delete',
           index: op.index,
           text: op.text
         });
       } else if (op.type === 'delete') {
-        this._doExecute({
+        this._doExecuteInternal({
           type: 'insert',
           index: op.index,
           text: op.text

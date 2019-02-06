@@ -88,21 +88,25 @@ export default function (superClass) {
       this._quill.enable();
     }
 
-    _doExecute(op) {
+    _doExecuteInternal(op) {
+      this._doExecute(op, true);
+    }
+
+    _doExecute(op, skipCaret = false) {
       switch (op.type) {
 
         case 'insert':
           this._quill.insertText(op.index, op.text);
-          this.__updateCaret(op.clientId, op.name, op.index + op.text.length, 0);
+          skipCaret || this.__updateCaret(op.clientId, op.name, op.index + op.text.length, 0);
           break;
 
         case 'delete':
           this._quill.deleteText(op.index, op.text.length);
-          this.__updateCaret(op.clientId, op.name, op.index, 0);
+          skipCaret || this.__updateCaret(op.clientId, op.name, op.index, 0);
           break;
 
         case 'caret':
-          this.__updateCaret(op.clientId, op.name, op.index, op.length);
+          skipCaret || this.__updateCaret(op.clientId, op.name, op.index, op.length);
           break;
       }
     }
