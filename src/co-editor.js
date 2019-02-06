@@ -48,7 +48,7 @@ class CoEditor extends OtMixin(StateMixin(EditorMixin(HTMLElement))) {
         this._remoteOperationReceived(operation);
         break;
 
-      case 'cursor':
+      case 'caret':
         this._isActive() && this._doExecute(operation);
         break;
 

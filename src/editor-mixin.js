@@ -34,7 +34,7 @@ export default function (superClass) {
 
       this._quill.on('selection-change', function (range, oldRange, source) {
         range && this._onUserSelectionChange({
-          type: 'cursor',
+          type: 'caret',
           index: range.index,
           length: range.length
         });
@@ -101,7 +101,7 @@ export default function (superClass) {
           this.__updateCaret(op.clientId, op.name, op.index, 0);
           break;
 
-        case 'cursor':
+        case 'caret':
           this.__updateCaret(op.clientId, op.name, op.index, op.length);
           break;
       }
