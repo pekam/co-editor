@@ -80,7 +80,8 @@ export default function (superClass) {
         this._doExecuteInternal({
           type: 'delete',
           index: op.index,
-          text: op.text
+          text: op.text,
+          length: op.text.length
         });
       } else if (op.type === 'delete') {
         this._doExecuteInternal({

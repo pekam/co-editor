@@ -58,6 +58,7 @@ export default function (superClass) {
           this._onUserInput({
             type: 'delete',
             index: index,
+            length: deletedText.length,
             text: deletedText
           });
         }
@@ -101,7 +102,10 @@ export default function (superClass) {
           break;
 
         case 'delete':
-          this._quill.deleteText(op.index, op.text.length);
+          // op.text might have become incorrect because of transformations
+          op.text = this.getText().substring(op.index, op.length);
+
+          this._quill.deleteText(op.index, op.length);
           skipCaret || this.__updateCaret(op.clientId, op.name, op.index, 0);
           break;
 
