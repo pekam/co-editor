@@ -19,7 +19,6 @@ export default function (superClass) {
       this.__undoDoRedo(op);
 
       this._sv[op.clientId]++;
-      this._hb.push(op);
 
       this._checkQueue();
     }
@@ -29,19 +28,34 @@ export default function (superClass) {
       causallyReadyOp && this._integrateRemoteOperation(causallyReadyOp);
     }
 
+    _addToHb(op, index) {
+      if (typeof index !== 'number') {
+        index = this.__getHbIndex(op);
+      }
+      this._hb.splice(index, 0, op);
+    }
+
     __undoDoRedo(op) {
-      const subsequentOps = this.__getSubsequentOps(op);
+      const hbIndex = this.__getHbIndex(op);
+      const subsequentOps = this._hb.slice(hbIndex, this._hb.length);
 
       subsequentOps.reverse().forEach(this.__undo.bind(this));
       this._doExecute(op);
+      this._addToHb(op, hbIndex);
       subsequentOps.reverse().forEach(this._doExecuteInternal.bind(this));
     }
 
-    __getSubsequentOps(op) {
+    /**
+     * Finds the index of the first operation in history buffer
+     * which should be ordered after the given operation according
+     * to the total ordering in the GOT algorithm. If there's no such
+     * operation, the length of the history buffer is returned.
+     */
+    __getHbIndex(op) {
       const sumSv = sv => Object.values(sv).reduce((sum, clock) => sum + clock);
       const opSum = sumSv(op.sv);
 
-      return this._hb.filter(oldOp => {
+      const firstSubsequentIndex = this._hb.findIndex(oldOp => {
         const oldOpSum = sumSv(oldOp.sv);
         if (opSum === oldOpSum) {
           return oldOp.clientId > op.clientId;
@@ -49,6 +63,12 @@ export default function (superClass) {
           return oldOpSum > opSum;
         }
       });
+
+      if (firstSubsequentIndex === -1) {
+        return this._hb.length;
+      } else {
+        return firstSubsequentIndex;
+      }
     }
 
     __undo(op) {
