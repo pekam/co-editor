@@ -24,8 +24,11 @@ export default function (superClass) {
     }
 
     _checkQueue() {
-      const causallyReadyOp = this._queue.find(op => this._isCausallyReady(op));
-      causallyReadyOp && this._integrateRemoteOperation(causallyReadyOp);
+      const causallyReadyOpIndex = this._queue.findIndex(op => this._isCausallyReady(op));
+      if (causallyReadyOpIndex > -1) {
+        const causallyReadyOp = this._queue.splice(causallyReadyOpIndex, 1)[0];
+        this._integrateRemoteOperation(causallyReadyOp);
+      }
     }
 
     _addToHb(op, index) {
