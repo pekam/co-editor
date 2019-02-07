@@ -1,3 +1,9 @@
+import transform from "./got-control-algorithm.js";
+import {
+  inclusionTransformation, exclusionTransformation,
+  listInclusionTransformation, listExclusionTransformation
+} from './transformations.js';
+
 export default function (superClass) {
   return class OtMixin extends superClass {
 
@@ -40,12 +46,35 @@ export default function (superClass) {
 
     __undoDoRedo(op) {
       const hbIndex = this.__getHbIndex(op);
-      const subsequentOps = this._hb.slice(hbIndex, this._hb.length);
+      const subsequentOps = this._hb.splice(hbIndex, this._hb.length);
 
       subsequentOps.reverse().forEach(this.__undo.bind(this));
+
+      op = transform(op, this._hb);
       this._doExecute(op);
       this._addToHb(op, hbIndex);
-      subsequentOps.reverse().forEach(this._doExecuteInternal.bind(this));
+
+      if (subsequentOps.length === 0) {
+        return;
+      }
+
+      const newOps = [op];
+
+      subsequentOps.reverse();
+
+      newOps.push(inclusionTransformation(subsequentOps[0], op));
+
+      for (var i = 1; i < subsequentOps.length; i++) {
+        const tmp = listExclusionTransformation(subsequentOps[i], subsequentOps.slice(0, i).reverse());
+        const transformed = listInclusionTransformation(tmp, newOps);
+        newOps.push(transformed);
+
+      }
+      newOps.slice(1).forEach(newOp => {
+        this._doExecuteInternal(newOp);
+        this._hb.push(newOp);
+      });
+
     }
 
     /**

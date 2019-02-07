@@ -15,6 +15,14 @@ export function exclusionTransformation(op1, op2) {
   return copy;
 }
 
+export function listInclusionTransformation(op, list) {
+  return list.reduce((o, listOp) => inclusionTransformation(o, listOp), op);
+}
+
+export function listExclusionTransformation(op, list) {
+  return list.reduce((o, listOp) => exclusionTransformation(o, listOp), op);
+}
+
 // Inclusion transformations
 const IT = {
   insert_insert(op1, op2) {
@@ -45,7 +53,7 @@ const IT = {
 // Exclusion transformations
 const ET = {
   insert_insert(op1, op2) {
-    if (op1.index >= op2.index) {
+    if (op1.index >= op2.index + op2.text.length) {
       op1.index -= op2.text.length;
     }
   },
