@@ -160,4 +160,81 @@ describe('<co-editor>', () => {
       expect(second._queue.length).to.equal(0);
     });
   });
+
+  describe('intention preserved convergence', function () {
+    this.timeout(5000);
+    beforeEach(() => {
+      delay = 100;
+      setInitialText('abc');
+    });
+
+    it('concurrent inserts', done => {
+      insertText(first, 1, 'FOO');
+      insertText(second, 2, 'BAR');
+
+      setTimeout(() => {
+        expectTexts('aFOObBARc');
+        done();
+      }, delay * 2);
+    });
+
+    describe('concurrent deletes', () => {
+
+      it('different index', done => {
+        deleteText(first, 0, 1);
+        deleteText(second, 2, 1);
+
+        setTimeout(() => {
+          expectTexts('b');
+          done();
+        }, delay * 2);
+      });
+
+      it('same index - should remove only one char', done => {
+        deleteText(first, 1, 1);
+        deleteText(second, 1, 1);
+
+        setTimeout(() => {
+          expectTexts('ac');
+          done();
+        }, delay * 2);
+      });
+
+      it('partly overlapping range', done => {
+        setInitialText('abcdef');
+        deleteText(first, 1, 3);
+        deleteText(second, 2, 3);
+
+        setTimeout(() => {
+          expectTexts('af');
+          done();
+        }, delay * 2);
+      });
+
+    });
+
+    describe('concurrent insert and delete', () => {
+
+      it('insert to lower index', done => {
+        insertText(first, 1, 'FOO');
+        deleteText(second, 2, 1);
+
+        setTimeout(() => {
+          expectTexts('aFOOb');
+          done();
+        }, delay * 2);
+      });
+
+      it('delete at lower index', done => {
+        insertText(first, 1, 'FOO');
+        deleteText(second, 0, 1);
+
+        setTimeout(() => {
+          expectTexts('FOObc');
+          done();
+        }, delay * 2);
+      });
+    });
+
+  });
 });

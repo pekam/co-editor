@@ -14,7 +14,7 @@ export function inclusionTransformation(op1, op2) {
 
 export function exclusionTransformation(op1, op2) {
   const copy = Object.assign({}, op1);
-  if (op2.type === 'identity') {
+  if (op2.type === 'identity' || (op1.type === 'identity' && op2.type !== 'delete')) {
     return copy;
   }
   ET[`${op1.type}_${op2.type}`](copy, op2);
