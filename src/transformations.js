@@ -5,12 +5,18 @@ inserts into the range of a delete operation.
 */
 export function inclusionTransformation(op1, op2) {
   const copy = Object.assign({}, op1);
+  if (op1.type === 'identity' || op2.type === 'identity') {
+    return copy;
+  }
   IT[`${op1.type}_${op2.type}`](copy, op2);
   return copy;
 }
 
 export function exclusionTransformation(op1, op2) {
   const copy = Object.assign({}, op1);
+  if (op2.type === 'identity') {
+    return copy;
+  }
   ET[`${op1.type}_${op2.type}`](copy, op2);
   return copy;
 }
@@ -26,26 +32,30 @@ export function listExclusionTransformation(op, list) {
 // Inclusion transformations
 const IT = {
   insert_insert(op1, op2) {
-    if (op1.index >= op2.index) {
-      op1.index += op2.text.length;
+    if (op1.index < op2.index) {
+    } else if (op1.index === op2.index && op1.clientId > op2.clientId) {
+    } else {
+      op1.index++;
     }
   },
 
   insert_delete(op1, op2) {
-    if (op1.index > op2.index + op2.length) {
-      op1.index -= op2.length;
+    if (op1.index > op2.index) {
+      op1.index--;
     }
   },
 
   delete_insert(op1, op2) {
-    if (op1.index > op2.index + op2.text.length) {
-      op1.index += op2.text.length;
+    if (op1.index >= op2.index) {
+      op1.index++;
     }
   },
 
   delete_delete(op1, op2) {
-    if (op1.index > op2.index + op2.length) {
-      op1.index -= op2.length;
+    if (op1.index > op2.index) {
+      op1.index--;
+    } else if (op1.index === op2.index) {
+      op1.type = 'identity';
     }
   }
 }
@@ -53,26 +63,32 @@ const IT = {
 // Exclusion transformations
 const ET = {
   insert_insert(op1, op2) {
-    if (op1.index >= op2.index + op2.text.length) {
-      op1.index -= op2.text.length;
+    if (op1.index > op2.index) {
+      op1.index--;
     }
   },
 
   insert_delete(op1, op2) {
-    if (op1.index > op2.index + op2.length) {
-      op1.index += op2.length;
+    if (op1.index > op2.index) {
+      op1.index++;
     }
   },
 
   delete_insert(op1, op2) {
-    if (op1.index > op2.index + op2.text.length) {
-      op1.index -= op2.text.length;
+    if (op1.index >= op2.index) {
+      op1.index--;
     }
   },
 
   delete_delete(op1, op2) {
-    if (op1.index > op2.index + op2.length) {
-      op1.index += op2.length;
+    if (op1.index > op2.index) {
+      op1.index++;
+    }
+  },
+
+  identity_delete(op1, op2) {
+    if (op1.index === op2.index) {
+      op1.type = 'delete';
     }
   }
 }

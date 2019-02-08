@@ -118,6 +118,8 @@ export default function (superClass) {
           index: op.index,
           text: op.text
         });
+      } else if (op.type === 'identity') {
+        // no-op
       } else {
         throw new Error('Unexpected operation type to undo: ' + op.type);
       }
