@@ -10,15 +10,27 @@ export default function transform(op, hb) {
     return op;
   }
 
-  const subList = hb.slice(firstIndependentIndex);
+  let subList = hb.slice(firstIndependentIndex);
   const dependentOps = subList.filter(oldOp => isDependentOn(oldOp, op));
 
   if (dependentOps.length === 0) {
-    return listInclusionTransformation(op, subList);
+    const result = listInclusionTransformation(op, subList);
+    return result;
   }
 
-  // TODO handle the dOPT puzzle case
-  return op;
+  for (var i = 0; i < dependentOps.length; i++) {
+    const ind = subList.findIndex(oldOp => isDependentOn(oldOp, op))
+    listTranspose(subList, ind);
+  }
+
+  const l = hb.length;
+  subList.forEach((oldOp, index) => {
+    hb[firstIndependentIndex + index] = oldOp;
+  });
+
+  const result = listInclusionTransformation(
+    op, subList.filter(oldOp => testIndependence(op, oldOp)));
+  return result;
 }
 
 
@@ -31,14 +43,14 @@ function isDependentOn(op1, op2) {
 }
 
 // GOTO algorithm helpers
-function listTranspose(list) {
-  const newList = [];
-  for (var i = list.length - 1; i > 0; i--) {
+function listTranspose(list, index) {
+  // const newList = [];
+  for (var i = index; i > 0; i--) {
     const transposed = transpose(list[i - 1], list[i]);
-    newList[i - 1] = transposed[0];
-    newList[i] = transposed[1];
+    list[i - 1] = transposed[0];
+    list[i] = transposed[1];
   }
-  return newList;
+  // return newList;
 }
 
 function transpose(op1, op2) {

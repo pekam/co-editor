@@ -22,7 +22,8 @@ export default function (superClass) {
     }
 
     _integrateRemoteOperation(op) {
-      this.__undoDoRedo(op);
+      // this.__undoDoRedo(op);
+      this.__transformWithGOTO(op);
 
       this._sv[op.clientId]++;
 
@@ -38,10 +39,18 @@ export default function (superClass) {
     }
 
     _addToHb(op, index) {
+      this._hb.push(op);
+      return;
       if (typeof index !== 'number') {
         index = this.__getHbIndex(op);
       }
       this._hb.splice(index, 0, op);
+    }
+
+    __transformWithGOTO(op) {
+      const transformed = transform(op, this._hb);
+      this._doExecute(transformed);
+      this._addToHb(transformed);
     }
 
     __undoDoRedo(op) {

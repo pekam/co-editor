@@ -122,20 +122,20 @@ describe('<co-editor>', () => {
     });
 
     it('should not execute op received before a dependent op', () => {
-      insertText(first, 0, 'foo');
-      insertText(first, 3, 'bar');
+      insertText(first, 0, 'a');
+      insertText(first, 1, 'b');
 
       second.receive(ops1[1]);
       expectText(second, '');
     });
 
     it('should execute ops received in wrong order', () => {
-      insertText(first, 0, 'foo');
-      insertText(first, 3, 'bar');
+      insertText(first, 0, 'a');
+      insertText(first, 1, 'b');
 
       second.receive(ops1[1]);
       second.receive(ops1[0]);
-      expectTexts('foobar');
+      expectTexts('ab');
     });
 
     it('should execute all causally ready ops from queue asap', () => {
