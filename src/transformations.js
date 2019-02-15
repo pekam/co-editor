@@ -52,10 +52,14 @@ const IT = {
   },
 
   delete_delete(op1, op2) {
+    // if (op2.disabledBy && op2.disabledBy.length)
+    //   return;
     if (op1.index > op2.index) {
       op1.index--;
-    } else if (op1.index === op2.index) {
-      op1.type = 'identity';
+    } else if (!(op2.disabledBy && op2.disabledBy.length) && op1.index === op2.index) {
+      // op1.type = 'identity';
+      if (!op1.disabledBy) op1.disabledBy = [op2];
+      else op1.disabledBy.push(op2);
     }
   }
 }
@@ -84,11 +88,23 @@ const ET = {
     if (op1.index > op2.index) {
       op1.index++;
     }
+    // else if (op1.index === op2.index) {
+    if (op1.disabledBy)
+      op1.disabledBy = op1.disabledBy.filter(op => {
+        const b = !opEquals(op, op2);
+        return b;
+      });
+    // }
   },
 
-  identity_delete(op1, op2) {
-    if (op1.index === op2.index) {
-      op1.type = 'delete';
-    }
-  }
+  // identity_delete(op1, op2) {
+  //   if (op1.index === op2.index) {
+  //     op1.type = 'delete';
+  //   }
+  // }
+}
+
+function opEquals (op1, op2) {
+  return op1.clientId === op2.clientId &&
+    op1.sv[op1.clientId] === op2.sv[op2.clientId];
 }

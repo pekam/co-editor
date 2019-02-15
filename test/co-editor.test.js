@@ -211,6 +211,17 @@ describe('<co-editor>', () => {
         }, delay * 2);
       });
 
+      it('3 char overlapping range', done => {
+        setInitialText('abcdef');
+        deleteText(first, 0, 4);
+        deleteText(second, 1, 4);
+
+        setTimeout(() => {
+          expectTexts('f');
+          done();
+        }, delay * 2);
+      });
+
     });
 
     describe('concurrent insert and delete', () => {

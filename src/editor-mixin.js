@@ -113,6 +113,8 @@ export default function (superClass) {
           break;
 
         case 'delete':
+          if (op.disabledBy && op.disabledBy.length)
+            return;
           // op.text might have become incorrect because of transformations
           op.text = this.getText().substring(op.index, op.length);
 
