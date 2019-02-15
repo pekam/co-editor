@@ -55,19 +55,31 @@ export default function (superClass) {
           const oldText = oldDelta.ops[0].insert;
           const deletedText = oldText.substring(index, index + ops.delete);
 
-          this._onUserInput({
+          [...deletedText].forEach(char => this._onUserInput({
             type: 'delete',
             index: index,
-            text: deletedText
-          });
+            length: 1,
+            text: char
+          }));
+          // this._onUserInput({
+          //   type: 'delete',
+          //   index: index,
+          //   length: deletedText.length,
+          //   text: deletedText
+          // });
         }
 
         if (ops.insert) {
-          this._onUserInput({
+          [...ops.insert].forEach((char, i) => this._onUserInput({
             type: 'insert',
-            index: index,
-            text: ops.insert
-          });
+            index: index + i,
+            text: char
+          }));
+          // this._onUserInput({
+          //   type: 'insert',
+          //   index: index,
+          //   text: ops.insert
+          // });
         }
       }.bind(this));
     }
@@ -101,7 +113,12 @@ export default function (superClass) {
           break;
 
         case 'delete':
-          this._quill.deleteText(op.index, op.text.length);
+          if (op.disabledBy && op.disabledBy.length)
+            return;
+          // op.text might have become incorrect because of transformations
+          op.text = this.getText().substring(op.index, op.length);
+
+          this._quill.deleteText(op.index, op.length);
           skipCaret || this.__updateCaret(op.clientId, op.name, op.index, 0);
           break;
 
