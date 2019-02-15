@@ -1,8 +1,3 @@
-/*
-Note: The current implementation doesn't fully satisfy intention
-preservation. It doesn't handle cases like when one operation
-inserts into the range of a delete operation.
-*/
 export function inclusionTransformation(op1, op2) {
   const copy = Object.assign({}, op1);
   if (op1.type === 'identity' || op2.type === 'identity') {
@@ -52,12 +47,9 @@ const IT = {
   },
 
   delete_delete(op1, op2) {
-    // if (op2.disabledBy && op2.disabledBy.length)
-    //   return;
     if (op1.index > op2.index) {
       op1.index--;
     } else if (!(op2.disabledBy && op2.disabledBy.length) && op1.index === op2.index) {
-      // op1.type = 'identity';
       if (!op1.disabledBy) op1.disabledBy = [op2];
       else op1.disabledBy.push(op2);
     }
@@ -88,20 +80,12 @@ const ET = {
     if (op1.index > op2.index) {
       op1.index++;
     }
-    // else if (op1.index === op2.index) {
     if (op1.disabledBy)
       op1.disabledBy = op1.disabledBy.filter(op => {
         const b = !opEquals(op, op2);
         return b;
       });
-    // }
   },
-
-  // identity_delete(op1, op2) {
-  //   if (op1.index === op2.index) {
-  //     op1.type = 'delete';
-  //   }
-  // }
 }
 
 function opEquals (op1, op2) {
