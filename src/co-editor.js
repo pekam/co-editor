@@ -20,14 +20,14 @@ class CoEditor extends OtMixin(StateMixin(EditorBase)) {
     this._sv[this._id]++;
     operation.sv = Object.assign({}, this._sv);
     operation.clientId = this._id;
-    operation.name = this.name;
+    operation.clientName = this.name;
     this._hb.push(operation);
     this.send(operation);
   }
 
   _onUserSelectionChange(operation) {
     operation.clientId = this._id;
-    operation.name = this.name;
+    operation.clientName = this.name;
     this.send(operation);
   }
 
