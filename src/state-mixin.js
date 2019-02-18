@@ -20,13 +20,6 @@ export default function (superClass) {
       return this._master || this._joined;
     }
 
-    _isCausallyReady(op) {
-      const clockAhead = Object.keys(op.sv).filter(id => id !== op.clientId.toString())
-        .find(id => op.sv[id] > this._sv[id]);
-
-      return !clockAhead && (op.sv[op.clientId] === this._sv[op.clientId] + 1);
-    }
-
     _generateId() {
       return this._nextId++;
     }

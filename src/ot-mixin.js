@@ -11,7 +11,7 @@ export default function (superClass) {
     }
 
     _remoteOperationReceived(op) {
-      if (this._isCausallyReady(op)) {
+      if (this.__isCausallyReady(op)) {
         this._integrateRemoteOperation(op);
       } else {
         this._queue.push(op);
@@ -30,11 +30,18 @@ export default function (superClass) {
     }
 
     _checkQueue() {
-      const causallyReadyOpIndex = this._queue.findIndex(op => this._isCausallyReady(op));
+      const causallyReadyOpIndex = this._queue.findIndex(op => this.__isCausallyReady(op));
       if (causallyReadyOpIndex > -1) {
         const causallyReadyOp = this._queue.splice(causallyReadyOpIndex, 1)[0];
         this._integrateRemoteOperation(causallyReadyOp);
       }
+    }
+
+    __isCausallyReady(op) {
+      const clockAhead = Object.keys(op.sv).filter(id => id !== op.clientId.toString())
+        .find(id => op.sv[id] > this._sv[id]);
+
+      return !clockAhead && (op.sv[op.clientId] === this._sv[op.clientId] + 1);
     }
   }
 }
