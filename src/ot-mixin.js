@@ -1,4 +1,5 @@
 import transform from "./goto-control-algorithm.js";
+import {inclusionTransformation, exclusionTransformation} from './transformations.js';
 
 export default function (superClass) {
   return class OtMixin extends superClass {
@@ -18,7 +19,8 @@ export default function (superClass) {
     }
 
     _integrateRemoteOperation(op) {
-      const transformed = transform(op, this._hb);
+      const transformed = transform(op, this._hb,
+        inclusionTransformation, exclusionTransformation);
       this._doExecute(transformed);
       this._hb.push(transformed);
 
