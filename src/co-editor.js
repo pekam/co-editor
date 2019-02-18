@@ -1,8 +1,6 @@
-import OtMixin from './ot-mixin.js';
-import EditorBase from './editor-base';
-import StateMixin from './state-mixin';
+import SessionHandler from "./session-handler";
 
-class CoEditor extends StateMixin(OtMixin(EditorBase)) {
+class CoEditor extends SessionHandler {
 
   get name() {
     return this.getAttribute('name');
