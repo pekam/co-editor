@@ -2,7 +2,7 @@ import OtMixin from './ot-mixin.js';
 import EditorBase from './editor-base';
 import StateMixin from './state-mixin';
 
-class CoEditor extends OtMixin(StateMixin(EditorBase)) {
+class CoEditor extends StateMixin(OtMixin(EditorBase)) {
 
   get name() {
     return this.getAttribute('name');

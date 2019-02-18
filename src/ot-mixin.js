@@ -7,6 +7,7 @@ export default function (superClass) {
     constructor() {
       super();
       this._hb = []; // History buffer
+      this._sv = {}; // State vector
       this._queue = [];
     }
 

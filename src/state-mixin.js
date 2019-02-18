@@ -4,8 +4,6 @@ export default function (superClass) {
     constructor() {
       super();
 
-      this._sv = {}; // State vector
-
       if (this.hasAttribute('master')) {
         this._master = true;
         this._nextId = 0;
