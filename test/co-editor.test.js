@@ -44,10 +44,10 @@ describe('<co-editor>', () => {
 
   const expectText = (editor, text) =>
     // Quill inserts a newline to the end
-    expect(editor.getText()).to.equal(text + '\n');
+    expect(editor.value).to.equal(text + '\n');
 
   const expectConvergence = () =>
-    expect(first.getText()).to.equal(second.getText());
+    expect(first.value).to.equal(second.value);
 
   const expectTexts = text => {
     expectText(first, text);

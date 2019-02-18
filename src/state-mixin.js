@@ -49,7 +49,7 @@ export default function (superClass) {
         type: 'join',
         id: id,
         sv: Object.assign({}, this._sv),
-        text: this.getText()
+        text: this.value
         // TODO: include caret positions?
       }
     }
@@ -62,7 +62,7 @@ export default function (superClass) {
 
       this._id = message.id;
       this._sv = message.sv;
-      this._setText(message.text);
+      this.value = message.text;
 
       // Remove from queue operations which are
       // already effective in the initial text

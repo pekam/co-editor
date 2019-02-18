@@ -83,12 +83,12 @@ export default class EditorBase extends HTMLElement {
     }.bind(this));
   }
 
-  getText() {
+  get value() {
     return this._quill.getText();
   }
 
-  _setText(text) {
-    this._quill.setText(text);
+  set value(value) {
+    this._quill.isEnabled() && this._quill.setText(value);
   }
 
   _disable() {
@@ -115,7 +115,7 @@ export default class EditorBase extends HTMLElement {
         if (op.disabledBy && op.disabledBy.length)
           return;
         // op.text might have become incorrect because of transformations
-        op.text = this.getText().substring(op.index, op.length);
+        op.text = this.value.substring(op.index, op.length);
 
         this._quill.deleteText(op.index, op.length);
         skipCaret || this.__updateCaret(op.clientId, op.clientName, op.index, 0);
