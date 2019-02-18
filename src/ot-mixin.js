@@ -1,4 +1,4 @@
-import transform from "./got-control-algorithm.js";
+import transform from "./goto-control-algorithm.js";
 
 export default function (superClass) {
   return class OtMixin extends superClass {

@@ -2,7 +2,7 @@ import {
   inclusionTransformation, exclusionTransformation
 } from './transformations.js';
 
-export default function GOTOtransform(op, hb) {
+export default function transform(op, hb) {
 
   let firstIndependentIndex = hb.findIndex(oldOp => !isDependentOn(oldOp, op));
 
