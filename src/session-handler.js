@@ -51,6 +51,7 @@ export default class SessionHandler extends OTHandler {
       throw new Error('A master editor received a ' +
         'message to join another session. This is not allowed.');
     }
+    this._enable();
 
     this._id = message.id;
     this._sv = message.sv;
@@ -62,7 +63,6 @@ export default class SessionHandler extends OTHandler {
       op.sv[op.clientId] > this._sv[op.clientId]);
 
     this._joined = true;
-    this._enable();
   }
 }
 
