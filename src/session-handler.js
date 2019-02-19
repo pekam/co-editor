@@ -55,7 +55,7 @@ export default class SessionHandler extends OTHandler {
 
     this._id = message.id;
     this._sv = message.sv;
-    this.value = message.text;
+    this._setValueSilently(message.text);
 
     // Remove from queue operations which are
     // already effective in the initial text

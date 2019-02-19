@@ -83,6 +83,11 @@ describe('<co-editor>', () => {
       expectTexts('for');
     });
 
+    it('should converge on set value', () => {
+      second.value = 'foo';
+      expectTexts('foo');
+    });
+
     describe('concurrent convergence', function () {
       this.timeout(5000);
       beforeEach(() => {

@@ -88,7 +88,15 @@ export default class EditorBase extends HTMLElement {
   }
 
   set value(value) {
-    this._quill.isEnabled() && this._quill.setText(value);
+    if (this._quill.isEnabled()) {
+      this._quill.deleteText(0, this._quill.getLength(), 'user');
+      this._quill.insertText(0, value, 'user');
+    }
+  }
+
+  // This doesn't generate any operations
+  _setValueSilently(value) {
+    this._quill.setText(value);
   }
 
   _disable() {
