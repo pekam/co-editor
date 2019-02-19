@@ -6,6 +6,7 @@
   "scripts": {
     "test": "karma start",
     "start": "owc-dev-server",
+    "build": "webpack",
     "test:watch": "karma start --auto-watch=true --single-run=false",
     "test:es5": "karma start karma.es5.config.js",
     "test:es5:watch": "karma start karma.es5.config.js --auto-watch=true --single-run=false",
