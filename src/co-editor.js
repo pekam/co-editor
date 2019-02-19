@@ -19,7 +19,7 @@ class CoEditor extends SessionHandler {
     operation.stateVector = Object.assign({}, this._stateVector);
     operation.clientId = this._id;
     operation.clientName = this.name;
-    this._hb.push(operation);
+    this._log.push(operation);
     this.send(operation);
   }
 

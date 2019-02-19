@@ -6,7 +6,7 @@ export default class OTHandler extends EditorBase {
 
   constructor() {
     super();
-    this._hb = [];
+    this._log = [];
     this._stateVector = {};
     this._queue = [];
   }
@@ -20,10 +20,10 @@ export default class OTHandler extends EditorBase {
   }
 
   _integrateRemoteOperation(op) {
-    const transformed = transform(op, this._hb,
+    const transformed = transform(op, this._log,
       inclusionTransformation, exclusionTransformation);
     this._doExecute(transformed);
-    this._hb.push(transformed);
+    this._log.push(transformed);
 
     this._stateVector[op.clientId]++;
 
