@@ -43,13 +43,13 @@ export default class SessionHandler extends OTHandler {
     const id = this._generateId();
     this._stateVector[id] = 0;
 
-    return {
+    return JSON.stringify({
       type: 'join',
       id: id,
       stateVector: Object.assign({}, this._stateVector),
       text: this.value
       // TODO: include caret positions?
-    }
+    });
   }
 
   _joinSession(message) {

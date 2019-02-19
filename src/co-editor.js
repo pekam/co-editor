@@ -20,13 +20,13 @@ class CoEditor extends SessionHandler {
     operation.clientId = this._id;
     operation.clientName = this.name;
     this._log.push(operation);
-    this.send(operation);
+    this.send(JSON.stringify(operation));
   }
 
   _onUserSelectionChange(operation) {
     operation.clientId = this._id;
     operation.clientName = this.name;
-    this.send(operation);
+    this.send(JSON.stringify(operation));
   }
 
   send(operation) {
@@ -34,7 +34,8 @@ class CoEditor extends SessionHandler {
   }
 
   receive(operation) {
-    // console.log(operation);
+    operation = JSON.parse(operation);
+    console.log(operation);
     switch (operation.type) {
 
       case 'join':
