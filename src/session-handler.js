@@ -9,7 +9,7 @@ export default class SessionHandler extends OTHandler {
       this._master = true;
       this._nextId = 0;
       this._id = this._generateId();
-      this._sv[this._id] = 0;
+      this._stateVector[this._id] = 0;
     } else {
       this._disable();
     }
@@ -35,12 +35,12 @@ export default class SessionHandler extends OTHandler {
     }
 
     const id = this._generateId();
-    this._sv[id] = 0;
+    this._stateVector[id] = 0;
 
     return {
       type: 'join',
       id: id,
-      sv: Object.assign({}, this._sv),
+      stateVector: Object.assign({}, this._stateVector),
       text: this.value
       // TODO: include caret positions?
     }
@@ -54,13 +54,13 @@ export default class SessionHandler extends OTHandler {
     this._enable();
 
     this._id = message.id;
-    this._sv = message.sv;
+    this._stateVector = message.stateVector;
     this._setValueSilently(message.text);
 
     // Remove from queue operations which are
     // already effective in the initial text
     this._queue = this._queue.filter(op =>
-      op.sv[op.clientId] > this._sv[op.clientId]);
+      op.stateVector[op.clientId] > this._stateVector[op.clientId]);
 
     this._joined = true;
   }

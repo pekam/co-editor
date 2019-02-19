@@ -3,7 +3,7 @@
  * GOTO (General Operational Transformation Optimized) algorithm.
  * As a side effect modifies the history buffer.
  * 
- * @param {Object} op a causally ready operation, state vector timestamp stored in its property 'sv'
+ * @param {Object} op a causally ready operation, state vector timestamp stored in its property 'stateVector'
  * @param {Array} hb the history buffer
  * @param {Function} it the inclusion transformation function
  * @param {Function} et the exclusion transformation function
@@ -35,7 +35,7 @@ export default function transform(op, hb, it, et) {
 }
 
 function isDependentOn(op1, op2) {
-  return op1.sv[op1.clientId] <= op2.sv[op1.clientId];
+  return op1.stateVector[op1.clientId] <= op2.stateVector[op1.clientId];
 }
 
 function transpose(op1, op2, it, et) {

@@ -15,8 +15,8 @@ class CoEditor extends SessionHandler {
   }
 
   _onUserInput(operation) {
-    this._sv[this._id]++;
-    operation.sv = Object.assign({}, this._sv);
+    this._stateVector[this._id]++;
+    operation.stateVector = Object.assign({}, this._stateVector);
     operation.clientId = this._id;
     operation.clientName = this.name;
     this._hb.push(operation);

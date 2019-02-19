@@ -90,5 +90,5 @@ const ET = {
 
 function opEquals (op1, op2) {
   return op1.clientId === op2.clientId &&
-    op1.sv[op1.clientId] === op2.sv[op2.clientId];
+    op1.stateVector[op1.clientId] === op2.stateVector[op2.clientId];
 }

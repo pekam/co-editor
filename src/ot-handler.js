@@ -6,8 +6,8 @@ export default class OTHandler extends EditorBase {
 
   constructor() {
     super();
-    this._hb = []; // History buffer
-    this._sv = {}; // State vector
+    this._hb = [];
+    this._stateVector = {};
     this._queue = [];
   }
 
@@ -25,7 +25,7 @@ export default class OTHandler extends EditorBase {
     this._doExecute(transformed);
     this._hb.push(transformed);
 
-    this._sv[op.clientId]++;
+    this._stateVector[op.clientId]++;
 
     this._checkQueue();
   }
@@ -39,9 +39,10 @@ export default class OTHandler extends EditorBase {
   }
 
   __isCausallyReady(op) {
-    const clockAhead = Object.keys(op.sv).filter(id => id !== op.clientId.toString())
-      .find(id => op.sv[id] > this._sv[id]);
+    const clockAhead = Object.keys(op.stateVector)
+      .filter(id => id !== op.clientId.toString())
+      .find(id => op.stateVector[id] > this._stateVector[id]);
 
-    return !clockAhead && (op.sv[op.clientId] === this._sv[op.clientId] + 1);
+    return !clockAhead && (op.stateVector[op.clientId] === this._stateVector[op.clientId] + 1);
   }
 }
