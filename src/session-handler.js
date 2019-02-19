@@ -2,9 +2,9 @@ import OTHandler from "./ot-handler";
 
 export default class SessionHandler extends OTHandler {
 
-  constructor() {
-    super();
+  static get observedAttributes() { return ['master']; }
 
+  attributeChangedCallback(name, oldValue, newValue) {
     if (this.hasAttribute('master')) {
       this._master = true;
       this._nextId = 0;
