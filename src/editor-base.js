@@ -1,5 +1,6 @@
 import '../vendor/vaadin-quill.min.js';
 import '../node_modules/quill-cursors/dist/quill-cursors.min';
+import quillStyles from '../vendor/quill-styles';
 
 export default class EditorBase extends HTMLElement {
 
@@ -14,8 +15,7 @@ export default class EditorBase extends HTMLElement {
             border: 1px solid lightgrey;
           }
         </style>
-        <link href="//cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-        <link rel="stylesheet" href="/node_modules/quill-cursors/dist/quill-cursors.css">
+        <style>${quillStyles}</style>
         <div id="editor-container"></div>
         `;
     const container = this.shadowRoot.querySelector('#editor-container');
