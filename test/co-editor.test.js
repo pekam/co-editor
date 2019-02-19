@@ -43,6 +43,17 @@ describe('<co-editor>', () => {
     expectText(second, text);
   };
 
+  describe('before join', () => {
+    it('should enable master', () => {
+      insertText(first, 0, 'foo');
+      expectText(first, 'foo');
+    });
+    it('should disable client', () => {
+      insertText(second, 0, 'foo');
+      expectText(second, '');
+    });
+  });
+
   describe('join session', () => {
     it('should set typed initial text', () => {
       insertText(first, 0, 'foo');
