@@ -35,6 +35,10 @@ class CoEditor extends SessionHandler {
 
   receive(operation) {
     operation = JSON.parse(operation);
+
+    if (this._isActive() && operation.clientId === this._id) {
+      return;
+    }
     console.log(operation);
     switch (operation.type) {
 
