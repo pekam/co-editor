@@ -66,7 +66,7 @@ export default class SessionHandler extends OTHandler {
     // Remove from queue operations which are
     // already effective in the initial text
     this._queue = this._queue.filter(op =>
-      op.stateVector[op.clientId] > this._stateVector[op.clientId]);
+      op.stateVector[op.userId] > this._stateVector[op.userId]);
 
     this._joined = true;
   }

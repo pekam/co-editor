@@ -116,7 +116,7 @@ export default class EditorBase extends HTMLElement {
 
       case 'insert':
         this._quill.insertText(op.index, op.text);
-        skipCaret || this.__updateCaret(op.clientId, op.clientName, op.index + op.text.length, 0);
+        skipCaret || this.__updateCaret(op.userId, op.userName, op.index + op.text.length, 0);
         break;
 
       case 'delete':
@@ -126,22 +126,22 @@ export default class EditorBase extends HTMLElement {
         op.text = this.value.substring(op.index, op.length);
 
         this._quill.deleteText(op.index, op.length);
-        skipCaret || this.__updateCaret(op.clientId, op.clientName, op.index, 0);
+        skipCaret || this.__updateCaret(op.userId, op.userName, op.index, 0);
         break;
 
       case 'caret':
-        skipCaret || this.__updateCaret(op.clientId, op.clientName, op.index, op.length);
+        skipCaret || this.__updateCaret(op.userId, op.userName, op.index, op.length);
         break;
     }
   }
 
-  __updateCaret(id, name, index, length) {
+  __updateCaret(id, userName, index, length) {
     if (Object.values(this._cursors.cursors).find(cursor => cursor.userId === id)) {
       this._cursors.moveCursor(id, { index: index, length: length });
     } else {
       this._cursors.setCursor(
         id, { index: index, length: length },
-        name, this.__getRandomColor()
+        userName, this.__getRandomColor()
       );
     }
   }

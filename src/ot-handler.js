@@ -25,8 +25,8 @@ export default class OTHandler extends EditorBase {
     this._doExecute(transformed);
     this._log.push(transformed);
 
-    this._stateVector[op.clientId] = this._stateVector[op.clientId] || 0;
-    this._stateVector[op.clientId]++;
+    this._stateVector[op.userId] = this._stateVector[op.userId] || 0;
+    this._stateVector[op.userId]++;
 
     this._checkQueue();
   }
@@ -41,9 +41,9 @@ export default class OTHandler extends EditorBase {
 
   __isCausallyReady(op) {
     const clockAhead = Object.keys(op.stateVector)
-      .filter(id => id !== op.clientId.toString())
+      .filter(id => id !== op.userId.toString())
       .find(id => op.stateVector[id] > (this._stateVector[id] || 0));
 
-    return !clockAhead && (op.stateVector[op.clientId] === (this._stateVector[op.clientId] || 0) + 1);
+    return !clockAhead && (op.stateVector[op.userId] === (this._stateVector[op.userId] || 0) + 1);
   }
 }

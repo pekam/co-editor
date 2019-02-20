@@ -28,7 +28,7 @@ export function listExclusionTransformation(op, list) {
 const IT = {
   insert_insert(op1, op2) {
     if (op1.index < op2.index) {
-    } else if (op1.index === op2.index && op1.clientId > op2.clientId) {
+    } else if (op1.index === op2.index && op1.userId > op2.userId) {
     } else {
       op1.index++;
     }
@@ -89,6 +89,6 @@ const ET = {
 }
 
 function opEquals (op1, op2) {
-  return op1.clientId === op2.clientId &&
-    op1.stateVector[op1.clientId] === op2.stateVector[op2.clientId];
+  return op1.userId === op2.userId &&
+    op1.stateVector[op1.userId] === op2.stateVector[op2.userId];
 }

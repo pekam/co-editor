@@ -2,15 +2,15 @@ import SessionHandler from "./session-handler";
 
 class CoEditor extends SessionHandler {
 
-  get name() {
-    return this.getAttribute('name');
+  get userName() {
+    return this.getAttribute('username');
   }
 
-  set name(value) {
+  set userName(value) {
     if (value) {
-      this.setAttribute('name', value);
+      this.setAttribute('username', value);
     } else {
-      this.removeAttribute('name');
+      this.removeAttribute('username');
     }
   }
 
@@ -26,15 +26,15 @@ class CoEditor extends SessionHandler {
   }
 
   __send(operation) {
-    operation.clientId = this._id;
-    operation.clientName = this.name;
+    operation.userId = this._id;
+    operation.userName = this.userName;
     this.dispatchEvent(new CustomEvent('update', { detail: JSON.stringify(operation) }));
   }
 
   receive(operation) {
     operation = JSON.parse(operation);
 
-    if (this._isActive() && operation.clientId === this._id) {
+    if (this._isActive() && operation.userId === this._id) {
       return;
     }
     console.log(operation);

@@ -35,7 +35,7 @@ export default function transform(op, log, it, et) {
 }
 
 function isDependentOn(op1, op2) {
-  return op1.stateVector[op1.clientId] <= op2.stateVector[op1.clientId];
+  return op1.stateVector[op1.userId] <= op2.stateVector[op1.userId];
 }
 
 function transpose(op1, op2, it, et) {
