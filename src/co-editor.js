@@ -26,7 +26,7 @@ class CoEditor extends SessionHandler {
   _onUserSelectionChange(operation) {
     operation.clientId = this._id;
     operation.clientName = this.name;
-    this.send(JSON.stringify(operation));
+    this._isActive() && this.send(JSON.stringify(operation));
   }
 
   send(operation) {
