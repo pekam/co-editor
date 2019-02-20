@@ -51,6 +51,11 @@ describe('<co-editor>', () => {
       insertText(second, 0, 'foo');
       expectText(second, '');
     });
+    it('should not execute remote ops as disabled', () => {
+      first.send = op => second.receive(op);
+      insertText(first, 0, 'foo');
+      expectText(second, '');
+    });
   });
 
   describe('join session', () => {

@@ -44,7 +44,7 @@ class CoEditor extends SessionHandler {
 
       case 'insert':
       case 'delete':
-        this._remoteOperationReceived(operation);
+        this._isActive() && this._remoteOperationReceived(operation);
         break;
 
       case 'caret':
