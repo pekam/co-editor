@@ -21,7 +21,7 @@ describe('<co-editor>', () => {
     `);
     first = parent.querySelector("#one");
     second = parent.querySelector("#two");
-    allClients = [first, second]
+    allClients = [first, second];
   });
 
   const setInitialText = text =>
@@ -52,7 +52,8 @@ describe('<co-editor>', () => {
       expectText(second, '');
     });
     it('should not execute remote ops as disabled', () => {
-      first.send = op => second.receive(op);
+      first.addEventListener('update', e => second.receive(e.detail));
+
       insertText(first, 0, 'foo');
       expectText(second, '');
     });
@@ -84,42 +85,46 @@ describe('<co-editor>', () => {
       return client;
     }
 
-    const sendTo = (op, receiver) =>
+    let sendTo = (op, receiver) =>
       delay ? setTimeout(() => receiver.receive(op), delay) : receiver.receive(op);
 
     const updateClients = () => {
-      allClients.forEach(client => client.send =
-        op => allClients.filter(c => c !== client).forEach(c => sendTo(op, c)));
+      allClients.forEach(client => client.addEventListener('update', e =>
+        allClients.filter(c => c !== client).forEach(c => sendTo(e.detail, c))));
     }
 
     beforeEach(() => {
       delay = undefined;
       second.receive(first.generateJoinMessage());
-      updateClients();
     });
 
     describe('two clients', () => {
 
-      it('should converge on insert', async () => {
-        insertText(first, 0, 'foo');
-        expectTexts('foo');
-      });
+      describe('synchronized convergence', () => {
+        beforeEach(() => updateClients());
 
-      it('should converge on delete', async () => {
-        insertText(first, 0, 'foobar');
-        deleteText(first, 2, 3);
-        expectTexts('for');
-      });
+        it('should converge on insert', async () => {
+          insertText(first, 0, 'foo');
+          expectTexts('foo');
+        });
 
-      it('should converge on set value', () => {
-        second.value = 'foo';
-        expectTexts('foo');
+        it('should converge on delete', async () => {
+          insertText(first, 0, 'foobar');
+          deleteText(first, 2, 3);
+          expectTexts('for');
+        });
+
+        it('should converge on set value', () => {
+          second.value = 'foo';
+          expectTexts('foo');
+        });
       });
 
       describe('concurrent convergence', function () {
         this.timeout(5000);
         beforeEach(() => {
           delay = 100;
+          updateClients();
         });
 
         it('should converge on concurrent inserts', done => {
@@ -168,8 +173,8 @@ describe('<co-editor>', () => {
         beforeEach(() => {
           ops1 = [];
           ops2 = [];
-          first.send = ops1.push.bind(ops1);
-          second.send = ops2.push.bind(ops2);
+          first.addEventListener('update', e => ops1.push(e.detail));
+          second.addEventListener('update', e => ops2.push(e.detail));
         });
 
         it('should not execute op received before a dependent op', () => {
@@ -216,6 +221,7 @@ describe('<co-editor>', () => {
         this.timeout(5000);
         beforeEach(() => {
           delay = 100;
+          updateClients();
           setInitialText('abc');
         });
 
@@ -301,6 +307,8 @@ describe('<co-editor>', () => {
     });
 
     describe('three clients', () => {
+
+      beforeEach(() => updateClients());
 
       it('should converge after third client joins and types', () => {
         const third = addClient();

@@ -17,20 +17,18 @@ class CoEditor extends SessionHandler {
   _onUserInput(operation) {
     this._stateVector[this._id]++;
     operation.stateVector = Object.assign({}, this._stateVector);
-    operation.clientId = this._id;
-    operation.clientName = this.name;
     this._log.push(operation);
-    this.send(JSON.stringify(operation));
+    this.__send(operation);
   }
 
   _onUserSelectionChange(operation) {
-    operation.clientId = this._id;
-    operation.clientName = this.name;
-    this._isActive() && this.send(JSON.stringify(operation));
+    this._isActive() && this.__send(operation);
   }
 
-  send(operation) {
-    // Implemented by user
+  __send(operation) {
+    operation.clientId = this._id;
+    operation.clientName = this.name;
+    this.dispatchEvent(new CustomEvent('update', { detail: JSON.stringify(operation) }));
   }
 
   receive(operation) {
