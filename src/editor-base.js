@@ -29,7 +29,8 @@ export default class EditorBase extends HTMLElement {
       },
       formats: []
     });
-    this._cursors = this._quill.getModule('cursors');
+    this.__quillCursors = this._quill.getModule('cursors');
+    this.__caretData = {};
 
     this._quill.on('selection-change', function (range, oldRange, source) {
       range && this._onUserSelectionChange({
@@ -136,14 +137,22 @@ export default class EditorBase extends HTMLElement {
   }
 
   __updateCaret(id, userName, index, length) {
-    if (Object.values(this._cursors.cursors).find(cursor => cursor.userId === id)) {
-      this._cursors.moveCursor(id, { index: index, length: length });
+    const range = { index: index, length: length };
+    if (!this.__caretData[id]) {
+      this.__addCaret(id, userName, range);
+    } else if (userName !== this.__caretData[id].userName) {
+      // Needs to be removed and re-added to update the name
+      this.__quillCursors.removeCursor(id);
+      this.__addCaret(id, userName, range);
     } else {
-      this._cursors.setCursor(
-        id, { index: index, length: length },
-        userName, this.__getRandomColor()
-      );
+      this.__quillCursors.moveCursor(id, range);
     }
+  }
+
+  __addCaret(id, userName, range) {
+    const color = (this.__caretData[id] && this.__caretData[id].color) || this.__getRandomColor();
+    this.__quillCursors.setCursor(id, range, userName, color);
+    this.__caretData[id] = { userName: userName, color: color };
   }
 
   __getRandomColor() {
