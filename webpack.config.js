@@ -1,5 +1,11 @@
+const path = require('path');
+
 module.exports = {
   entry: './src/co-editor.js',
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'co-editor.min.js'
+  },
   mode: 'production',
   module: {
     rules: [
