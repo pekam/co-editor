@@ -10,7 +10,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: require.resolve('./vendor/vaadin-quill.min.js'),
+        test: require.resolve('./vendor/quill.core.js'),
         use: [{
           loader: 'expose-loader',
           options: 'Quill'

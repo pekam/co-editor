@@ -1,4 +1,4 @@
-import '../vendor/vaadin-quill.min.js';
+import '../vendor/quill.core';
 import '../node_modules/quill-cursors/dist/quill-cursors.min';
 import quillStyles from '../vendor/quill-styles';
 
@@ -23,9 +23,8 @@ export default class EditorBase extends HTMLElement {
     Quill.register('modules/cursors', QuillCursors);
     this._quill = new Quill(container, {
       modules: {
-        toolbar: false,
         cursors: true,
-        history: { maxStack: 0 } // Disabling Quill's undo/redo
+        history: { maxStack: 0 } // Disables Quill's undo/redo
       },
       formats: []
     });
