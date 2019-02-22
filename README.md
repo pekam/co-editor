@@ -1,6 +1,12 @@
 # \<co-editor\>
 
-A web component for real-time collaborative text editing
+`<co-editor>` is a web component for real-time collaborative text editing. It maintains consistent document states between collaborating users with _operational transformation_. All of this logic is handled by the component in client-side, so the application developer only needs to broadcast the updates from each client to the others.
+
+Simulating 5000ms network delay between two collaborating clients:
+
+![co-editor demo gif](demo.gif)
+
+(see `index.html` for the example code)
 
 ## Running the Demo Server
 ```

@@ -10,11 +10,18 @@
   <script src="src/co-editor.js" type="module"></script>
   <!-- Use the script below to test the webpack build instead: -->
   <!-- <script src="dist/co-editor.min.js"></script> -->
+
+  <style>
+    co-editor {
+      width: 400px;
+      height: 120px;
+    }
+  </style>
 </head>
 
 <body>
-  <co-editor username="one" id="one" master style="height:300px;"></co-editor>
-  <co-editor username="two" id="two" style="height:300px;"></co-editor>
+  <co-editor username="Pekka" id="one" master></co-editor>
+  <co-editor username="Paavo" id="two"></co-editor>
   <button id="join">Join session</button>
 
   <script>
