@@ -10,8 +10,7 @@ export default class SessionHandler extends OTHandler {
   static get observedAttributes() { return ['master']; }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if (this.hasAttribute('master')) {
-      this._master = true;
+    if (this.master) {
       this._nextId = 0;
       this._id = this._generateId();
       this._stateVector[this._id] = 0;
@@ -21,8 +20,20 @@ export default class SessionHandler extends OTHandler {
     }
   }
 
+  get master() {
+    return this.hasAttribute('master');
+  }
+
+  set master(value) {
+    if (value) {
+      this.setAttribute('master', value);
+    } else {
+      this.removeAttribute('master');
+    }
+  }
+
   _isActive() {
-    return this._master || this._joined;
+    return this.master || this._joined;
   }
 
   _generateId() {
@@ -34,7 +45,7 @@ export default class SessionHandler extends OTHandler {
    * another client to join this client's session.
    */
   generateJoinMessage() {
-    if (!this._master) {
+    if (!this.master) {
       throw new Error('Only a master editor can generate ' +
         'a message for others to join its session. ' +
         'Set the "master" attribute on the editor first.');
@@ -53,7 +64,7 @@ export default class SessionHandler extends OTHandler {
   }
 
   _joinSession(message) {
-    if (this._master) {
+    if (this.master) {
       throw new Error('A master editor received a ' +
         'message to join another session. This is not allowed.');
     }
