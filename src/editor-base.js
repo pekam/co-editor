@@ -116,7 +116,7 @@ export default class EditorBase extends HTMLElement {
 
       case 'insert':
         this._quill.insertText(op.index, op.text);
-        skipCaret || this.__updateCaret(op.userId, op.userName, op.index + op.text.length, 0);
+        skipCaret || this.__updateCaret(op.userId, op.username, op.index + op.text.length, 0);
         break;
 
       case 'delete':
@@ -126,32 +126,32 @@ export default class EditorBase extends HTMLElement {
         op.text = this.value.substring(op.index, op.length);
 
         this._quill.deleteText(op.index, op.length);
-        skipCaret || this.__updateCaret(op.userId, op.userName, op.index, 0);
+        skipCaret || this.__updateCaret(op.userId, op.username, op.index, 0);
         break;
 
       case 'caret':
-        skipCaret || this.__updateCaret(op.userId, op.userName, op.index, op.length);
+        skipCaret || this.__updateCaret(op.userId, op.username, op.index, op.length);
         break;
     }
   }
 
-  __updateCaret(id, userName, index, length) {
+  __updateCaret(id, username, index, length) {
     const range = { index: index, length: length };
     if (!this.__caretData[id]) {
-      this.__addCaret(id, userName, range);
-    } else if (userName !== this.__caretData[id].userName) {
+      this.__addCaret(id, username, range);
+    } else if (username !== this.__caretData[id].username) {
       // Needs to be removed and re-added to update the name
       this.__quillCursors.removeCursor(id);
-      this.__addCaret(id, userName, range);
+      this.__addCaret(id, username, range);
     } else {
       this.__quillCursors.moveCursor(id, range);
     }
   }
 
-  __addCaret(id, userName, range) {
+  __addCaret(id, username, range) {
     const color = (this.__caretData[id] && this.__caretData[id].color) || this.__getRandomColor();
-    this.__quillCursors.setCursor(id, range, userName, color);
-    this.__caretData[id] = { userName: userName, color: color };
+    this.__quillCursors.setCursor(id, range, username, color);
+    this.__caretData[id] = { username: username, color: color };
   }
 
   __getRandomColor() {

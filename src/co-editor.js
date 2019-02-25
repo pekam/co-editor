@@ -2,11 +2,11 @@ import SessionHandler from "./session-handler";
 
 class CoEditor extends SessionHandler {
 
-  get userName() {
+  get username() {
     return this.getAttribute('username');
   }
 
-  set userName(value) {
+  set username(value) {
     if (value) {
       this.setAttribute('username', value);
     } else {
@@ -27,7 +27,7 @@ class CoEditor extends SessionHandler {
 
   __send(operation) {
     operation.userId = this._id;
-    operation.userName = this.userName;
+    operation.username = this.username;
     this.dispatchEvent(new CustomEvent('update', { detail: JSON.stringify(operation) }));
   }
 
