@@ -12,7 +12,7 @@ export default class OTHandler extends EditorBase {
   }
 
   _remoteOperationReceived(op) {
-    if (this.__isCausallyReady(op)) {
+    if (this._isActive() && this.__isCausallyReady(op)) {
       this._integrateRemoteOperation(op);
     } else {
       this._queue.push(op);
@@ -32,6 +32,10 @@ export default class OTHandler extends EditorBase {
   }
 
   _checkQueue() {
+    // Remove operations which are already effective in the text
+    this._queue = this._queue.filter(op =>
+      op.stateVector[op.userId] > this._stateVector[op.userId]);
+
     const causallyReadyOpIndex = this._queue.findIndex(op => this.__isCausallyReady(op));
     if (causallyReadyOpIndex > -1) {
       const causallyReadyOp = this._queue.splice(causallyReadyOpIndex, 1)[0];

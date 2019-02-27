@@ -70,6 +70,13 @@ describe('<co-editor>', () => {
       second.receive(first.generateJoinMessage());
       expectText(second, 'foo');
     });
+    it('should execute queued ops', () => {
+      first.addEventListener('update', e => second.receive(e.detail));
+      const joinMessage = first.generateJoinMessage();
+      insertText(first, 0, 'foo');
+      second.receive(joinMessage);
+      expectText(second, 'foo');
+    });
   });
 
   describe('consistency management', () => {
