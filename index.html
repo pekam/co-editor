@@ -19,23 +19,25 @@
   </style>
 </head>
 
-<body>
-  <co-editor username="Pekka" id="one" master></co-editor>
+<body onload="init()">
+  <co-editor username="Pekka" id="one"></co-editor>
   <co-editor username="Paavo" id="two"></co-editor>
   <button id="join">Join session</button>
 
   <script>
-    const first = document.querySelector('#one');
-    const second = document.querySelector('#two');
+    function init() {
+      const first = document.querySelector('#one');
+      const second = document.querySelector('#two');
 
-    const delay = 5000;
-    first.addEventListener('update', e => setTimeout(() => second.receive(e.detail), delay));
-    second.addEventListener('update', e => setTimeout(() => first.receive(e.detail), delay));
+      first.initSession();
 
-    document.querySelector("#join").addEventListener('click', e => {
-      second.receive(first.generateJoinMessage());
-    });
-
+      const delay = 5000;
+      first.addEventListener('update', e => setTimeout(() => second.receive(e.detail), delay));
+      second.addEventListener('update', e => setTimeout(() => first.receive(e.detail), delay));
+      document.querySelector("#join").addEventListener('click', e => {
+        second.joinSession();
+      });
+    }
   </script>
 </body>
 

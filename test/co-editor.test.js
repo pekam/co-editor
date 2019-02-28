@@ -15,13 +15,14 @@ describe('<co-editor>', () => {
   beforeEach(async () => {
     parent = await fixture(html`
       <div>
-        <co-editor id="one" master></co-editor>
+        <co-editor id="one"></co-editor>
         <co-editor id="two"></co-editor>
       </div>
     `);
     first = parent.querySelector("#one");
     second = parent.querySelector("#two");
     allClients = [first, second];
+    first.initSession();
   });
 
   const setInitialText = text =>
@@ -62,12 +63,14 @@ describe('<co-editor>', () => {
   describe('join session', () => {
     it('should set typed initial text', () => {
       insertText(first, 0, 'foo');
-      second.receive(first.generateJoinMessage());
+      first.addEventListener('update', e => second.receive(e.detail));
+      second.joinSession();
+      debugger;
       expectText(second, 'foo');
     });
     it('should set initial text set as property', () => {
       first.value = 'foo';
-      second.receive(first.generateJoinMessage());
+      second.joinSession();
       expectText(second, 'foo');
     });
     it('should execute queued ops', () => {
@@ -108,7 +111,7 @@ describe('<co-editor>', () => {
 
     beforeEach(() => {
       delay = undefined;
-      second.receive(first.generateJoinMessage());
+      second.joinSession();
     });
 
     describe('two clients', () => {
