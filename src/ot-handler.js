@@ -11,6 +11,12 @@ export default class OTHandler extends EditorBase {
     this._queue = [];
   }
 
+  _onUserInput(op) {
+    this._stateVector[this._id]++;
+    op.stateVector = Object.assign({}, this._stateVector);
+    this._log.push(op);
+  }
+
   _remoteOperationReceived(op) {
     if (this._isActive() && this.__isCausallyReady(op)) {
       this._integrateRemoteOperation(op);
