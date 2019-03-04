@@ -77,6 +77,14 @@ describe('<co-editor>', () => {
       second.receive(joinMessage);
       expectText(second, 'foo');
     });
+    it('should clear queue from ops effective in initial text', () => {
+      first.addEventListener('update', e => second.receive(e.detail));
+      insertText(first, 0, 'foo');
+      console.log(second._queue);
+      second.receive(first.generateJoinMessage());
+      console.log(second._queue);
+      expect(second._queue).to.eql([]);
+    });
   });
 
   describe('consistency management', () => {
