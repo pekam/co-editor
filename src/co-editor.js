@@ -35,7 +35,6 @@ class CoEditor extends SessionHandler {
     if (this._isActive() && operation.userId === this._id) {
       return;
     }
-    console.log(operation);
     switch (operation.type) {
 
       case 'join':
