@@ -23,7 +23,6 @@
   },
   "homepage": "https://github.com/pekam/co-editor",
   "dependencies": {
-    "quill": "^1.3.6",
     "quill-cursors": "^1.0.3"
   },
   "devDependencies": {
