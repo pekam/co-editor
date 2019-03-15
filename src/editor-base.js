@@ -1,6 +1,6 @@
-import '../vendor/quill.core';
-import '../node_modules/quill-cursors/dist/quill-cursors.min';
-import quillStyles from '../vendor/quill-styles';
+import '../vendor/quill.core.js';
+import '../node_modules/quill-cursors/dist/quill-cursors.min.js';
+import quillStyles from '../vendor/quill-styles.js';
 
 export default class EditorBase extends HTMLElement {
 

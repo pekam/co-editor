@@ -1,4 +1,4 @@
-import OTHandler from "./ot-handler";
+import OTHandler from "./ot-handler.js";
 
 export default class SessionHandler extends OTHandler {
 

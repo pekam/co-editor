@@ -1,4 +1,4 @@
-import SessionHandler from "./session-handler";
+import SessionHandler from "./session-handler.js";
 
 class CoEditor extends SessionHandler {
 
