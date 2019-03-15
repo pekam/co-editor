@@ -1,4 +1,6 @@
+const webpack = require('webpack');
 const path = require('path');
+const fs = require('fs');
 
 module.exports = {
   entry: './src/co-editor.js',
@@ -24,5 +26,8 @@ module.exports = {
         }]
       }
     ]
-  }
+  },
+  plugins: [
+    new webpack.BannerPlugin(fs.readFileSync('./LICENSE', 'utf8'))
+  ]
 }

@@ -4,6 +4,12 @@
  * Copyright (c) 2014, Jason Chen
  * Copyright (c) 2013, salesforce.com
  */
+
+/*
+* This is a custom build of Quill with shadow DOM support:
+* https://github.com/web-padawan/quill/tree/vaadin-quill
+*/
+
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();

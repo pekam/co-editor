@@ -1,8 +1,8 @@
 {
   "name": "co-editor",
   "version": "1.0.0",
-  "description": "",
-  "main": "co-editor.js",
+  "description": "A web component for real-time collaborative text editing",
+  "main": "src/co-editor.js",
   "scripts": {
     "test": "karma start",
     "start": "owc-dev-server",
@@ -12,8 +12,16 @@
     "test:es5:watch": "karma start karma.es5.config.js --auto-watch=true --single-run=false",
     "test:es5:bs": "karma start karma.es5.bs.config.js"
   },
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pekam/co-editor.git"
+  },
+  "author": "Pekka Maanpää",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/pekam/co-editor/issues"
+  },
+  "homepage": "https://github.com/pekam/co-editor",
   "dependencies": {
     "quill": "^1.3.6",
     "quill-cursors": "^1.0.3"
