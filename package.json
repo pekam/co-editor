@@ -2,7 +2,7 @@
   "name": "co-editor",
   "version": "1.0.0",
   "description": "A web component for real-time collaborative text editing",
-  "main": "src/co-editor.js",
+  "main": "dist/co-editor.min.js",
   "scripts": {
     "test": "karma start",
     "start": "owc-dev-server",
@@ -12,6 +12,11 @@
     "test:es5:watch": "karma start karma.es5.config.js --auto-watch=true --single-run=false",
     "test:es5:bs": "karma start karma.es5.bs.config.js"
   },
+  "files": [
+    "dist/",
+    "demo.gif",
+    "index.html"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/pekam/co-editor.git"
