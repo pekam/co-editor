@@ -1,6 +1,6 @@
 {
   "name": "co-editor",
-  "version": "1.0.0-alpha2",
+  "version": "1.0.0-alpha3",
   "description": "A web component for real-time collaborative text editing",
   "main": "dist/co-editor.min.js",
   "scripts": {
