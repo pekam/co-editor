@@ -37,6 +37,9 @@ class CoEditor extends SessionHandler {
     }
     switch (operation.type) {
 
+      case 'request-join':
+        this._joinRequested(operation);
+        break;
       case 'join':
         this._joinSession(operation);
         break;
