@@ -11,8 +11,10 @@ describe('<co-editor>', () => {
   let first, second;
   let allClients;
   let parent;
+  let delay;
 
   beforeEach(async () => {
+    delay = undefined;
     parent = await fixture(html`
       <div>
         <co-editor id="one"></co-editor>
@@ -24,6 +26,20 @@ describe('<co-editor>', () => {
     allClients = [first, second];
     first.initSession();
   });
+
+  const connectClients = (clients = allClients) =>
+    clients.forEach(client => client.addEventListener('update', e =>
+      clients.forEach(otherClient => client !== otherClient && sendTo(e.detail, otherClient))));
+
+  const addClient = () => {
+    const client = document.createElement('co-editor');
+    parent.appendChild(client);
+    allClients.push(client);
+    return client;
+  }
+
+  const sendTo = (op, receiver) =>
+    delay ? setTimeout(() => receiver.receive(op), delay) : receiver.receive(op);
 
   const setInitialText = text =>
     allClients.forEach(client => client._quill.setText(text, 'api'));
@@ -53,8 +69,7 @@ describe('<co-editor>', () => {
       expectText(second, '');
     });
     it('should not execute remote ops as disabled', () => {
-      first.addEventListener('update', e => second.receive(e.detail));
-
+      connectClients();
       insertText(first, 0, 'foo');
       expectText(second, '');
     });
@@ -63,60 +78,53 @@ describe('<co-editor>', () => {
   describe('join session', () => {
     it('should set typed initial text', () => {
       insertText(first, 0, 'foo');
-      first.addEventListener('update', e => second.receive(e.detail));
+      connectClients();
       second.joinSession();
       expectText(second, 'foo');
     });
     it('should set initial text set as property', () => {
       first.value = 'foo';
+      connectClients();
       second.joinSession();
       expectText(second, 'foo');
     });
     it('should execute queued ops', () => {
-      first.addEventListener('update', e => second.receive(e.detail));
-      const joinMessage = first.generateJoinMessage();
+      connectClients();
+      let joinMessage;
+      const defaultReceive = second.receive;
+      second.receive = op => {
+        if (!joinMessage && JSON.parse(op).type === 'join') {
+          joinMessage = op;
+        } else {
+          defaultReceive.call(second, op);
+        }
+      };
+      second.joinSession();
       insertText(first, 0, 'foo');
+      expectText(second, '');
+      expect(second._queue.length).to.eql(3);
       second.receive(joinMessage);
       expectText(second, 'foo');
+      expect(second._queue.length).to.eql(0);
     });
     it('should clear queue from ops effective in initial text', () => {
-      first.addEventListener('update', e => second.receive(e.detail));
+      connectClients();
       insertText(first, 0, 'foo');
-      second.receive(first.generateJoinMessage());
+      second.joinSession();
       expect(second._queue).to.eql([]);
     });
   });
 
   describe('consistency management', () => {
 
-    let delay;
-
-    const addClient = () => {
-      const client = document.createElement('co-editor');
-      parent.appendChild(client);
-      allClients.push(client);
-      client.receive(first.generateJoinMessage());
-      updateClients();
-      return client;
-    }
-
-    let sendTo = (op, receiver) =>
-      delay ? setTimeout(() => receiver.receive(op), delay) : receiver.receive(op);
-
-    const updateClients = () => {
-      allClients.forEach(client => client.addEventListener('update', e =>
-        allClients.filter(c => c !== client).forEach(c => sendTo(e.detail, c))));
-    }
-
-    beforeEach(() => {
-      delay = undefined;
-      second.joinSession();
-    });
-
     describe('two clients', () => {
 
       describe('synchronized convergence', () => {
-        beforeEach(() => updateClients());
+
+        beforeEach(() => {
+          connectClients();
+          second.joinSession();
+        });
 
         it('should converge on insert', async () => {
           insertText(first, 0, 'foo');
@@ -138,8 +146,9 @@ describe('<co-editor>', () => {
       describe('concurrent convergence', function () {
         this.timeout(5000);
         beforeEach(() => {
+          connectClients();
+          second.joinSession();
           delay = 100;
-          updateClients();
         });
 
         it('should converge on concurrent inserts', done => {
@@ -188,8 +197,21 @@ describe('<co-editor>', () => {
         beforeEach(() => {
           ops1 = [];
           ops2 = [];
-          first.addEventListener('update', e => ops1.push(e.detail));
-          second.addEventListener('update', e => ops2.push(e.detail));
+          first.addEventListener('update', e => {
+            if (e.detail.includes('join')) {
+              second.receive(e.detail);
+            } else {
+              ops1.push(e.detail);
+            }
+          });
+          second.addEventListener('update', e => {
+            if (e.detail.includes('join')) {
+              first.receive(e.detail);
+            } else {
+              ops2.push(e.detail);
+            }
+          });
+          second.joinSession();
         });
 
         it('should not execute op received before a dependent op', () => {
@@ -235,8 +257,9 @@ describe('<co-editor>', () => {
       describe('intention preserved convergence', function () {
         this.timeout(5000);
         beforeEach(() => {
+          connectClients();
+          second.joinSession();
           delay = 100;
-          updateClients();
           setInitialText('abc');
         });
 
@@ -323,23 +346,33 @@ describe('<co-editor>', () => {
 
     describe('three clients', () => {
 
-      beforeEach(() => updateClients());
+      beforeEach(() => {
+        connectClients();
+        second.joinSession();
+      });
+
+      const addClientAndConnect = () => {
+        const client = addClient();
+        connectClients();
+        client.joinSession();
+        return client;
+      };
 
       it('should converge after third client joins and types', () => {
-        const third = addClient();
+        const third = addClientAndConnect();
         insertText(third, 0, 'foo');
         expectTexts('foo');
       });
 
       it('should converge after third client joins and second one types', () => {
-        addClient();
+        addClientAndConnect();
         insertText(second, 0, 'foo');
         expectTexts('foo');
       });
 
       it('should converge after third client joins with initial value', () => {
         insertText(first, 0, 'foo');
-        addClient();
+        addClientAndConnect();
         expectTexts('foo');
       });
     });
