@@ -341,6 +341,37 @@ describe('<co-editor>', () => {
             }, delay * 2);
           });
         });
+
+        describe('insert and delete at both clients', () => {
+
+          const replaceText = (client, index, text) => {
+            deleteText(client, index, 1);
+            insertText(client, index, text);
+          }
+
+          it('replace at the same position', done => {
+            replaceText(first, 1, 'A');
+            replaceText(second, 1, 'B');
+
+            setTimeout(() => {
+              expectTexts('aBAc');
+              done();
+            }, delay * 2);
+          });
+
+          // Known bug:
+          it('del-ins-del vs del-ins at the same position', done => {
+            replaceText(first, 1, 'A');
+            deleteText(first, 1, 1);
+            replaceText(second, 1, 'B');
+
+            setTimeout(() => {
+              expectTexts('aBc');
+              done();
+            }, delay * 2);
+          });
+
+        });
       });
     });
 
