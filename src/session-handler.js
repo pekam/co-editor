@@ -30,7 +30,6 @@ export default class SessionHandler extends OTHandler {
       type: 'request-join',
       tmpId: this.__tmpId
     });
-    console.log(this.__tmpId);
   }
 
   _joinRequested(op) {

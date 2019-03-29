@@ -65,7 +65,6 @@ describe('<co-editor>', () => {
       insertText(first, 0, 'foo');
       first.addEventListener('update', e => second.receive(e.detail));
       second.joinSession();
-      debugger;
       expectText(second, 'foo');
     });
     it('should set initial text set as property', () => {

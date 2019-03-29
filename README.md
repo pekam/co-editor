@@ -42,12 +42,12 @@ by implementing the GOTO algorithm (General Operational Transformation Optimized
 based on research work by Chengzheng Sun et al.
 ```
 [1] C. Sun, X. Jia, Y. Zhang, Y. Yang, and D. Chen,
-    “Achieving convergence, causalitypreservation, and intention preservation in 
-    real-time cooperative editing systems”, ACM Trans. Comput. -Hum. Interact., 
+    “Achieving convergence, causality preservation, and intention preservation in
+    real-time cooperative editing systems”, ACM Trans. Comput. -Hum. Interact.,
     vol. 5, no. 1, pp. 63–108, Mar. 1998.
 
 [2] C. Sun and C. Ellis,
-    “Operational transformation in real-time group editors: Issues, algorithms, 
-    and achievements”, in Proceedings of the 1998 ACM Conferenceon Computer Supported 
+    “Operational transformation in real-time group editors: Issues, algorithms,
+    and achievements”, in Proceedings of the 1998 ACM Conferenceon Computer Supported
     Cooperative Work, ser. CSCW ’98, Seattle, Washington, USA: ACM, 1998, pp. 59–68.
 ```
