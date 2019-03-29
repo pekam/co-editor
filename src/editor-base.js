@@ -107,16 +107,12 @@ export default class EditorBase extends HTMLElement {
     this._quill.enable();
   }
 
-  _doExecuteInternal(op) {
-    this._doExecute(op, true);
-  }
-
-  _doExecute(op, skipCaret = false) {
+  _doExecute(op) {
     switch (op.type) {
 
       case 'insert':
         this._quill.insertText(op.index, op.text);
-        skipCaret || this.__updateCaret(op.userId, op.username, op.index + op.text.length, 0);
+        this.__updateCaret(op.userId, op.username, op.index + op.text.length, 0);
         break;
 
       case 'delete':
@@ -126,11 +122,11 @@ export default class EditorBase extends HTMLElement {
         op.text = this.value.substring(op.index, op.length);
 
         this._quill.deleteText(op.index, op.length);
-        skipCaret || this.__updateCaret(op.userId, op.username, op.index, 0);
+        this.__updateCaret(op.userId, op.username, op.index, 0);
         break;
 
       case 'caret':
-        skipCaret || this.__updateCaret(op.userId, op.username, op.index, op.length);
+        this.__updateCaret(op.userId, op.username, op.index, op.length);
         break;
     }
   }
