@@ -1,6 +1,7 @@
 import '../vendor/quill.core.js';
 import '../node_modules/quill-cursors/dist/quill-cursors.min.js';
 import quillStyles from '../vendor/quill-styles.js';
+import { generateRandomColor } from './helpers.js';
 
 export default class EditorBase extends HTMLElement {
 
@@ -124,17 +125,9 @@ export default class EditorBase extends HTMLElement {
   }
 
   __addCaret(id, username, range) {
-    const color = (this.__caretData[id] && this.__caretData[id].color) || this.__getRandomColor();
+    const color = (this.__caretData[id] && this.__caretData[id].color)
+      || generateRandomColor();
     this.__quillCursors.setCursor(id, range, username, color);
     this.__caretData[id] = { username, color };
-  }
-
-  __getRandomColor() {
-    var letters = '0123456789ABCDEF';
-    var color = '#';
-    for (var i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
   }
 }

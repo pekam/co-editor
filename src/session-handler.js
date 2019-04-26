@@ -1,5 +1,5 @@
 import OTHandler from "./ot-handler.js";
-import generateUUID from './generate-uuid.js';
+import { generateUUID } from './helpers.js';
 
 export default class SessionHandler extends OTHandler {
 
