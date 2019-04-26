@@ -14,47 +14,48 @@ class CoEditor extends SessionHandler {
     }
   }
 
-  _onUserInput(operation) {
-    super._onUserInput(operation);
-    this.__send(operation);
+  _onUserInput(message) {
+    super._onUserInput(message);
+    this._send(message);
   }
 
-  _onUserSelectionChange(operation) {
-    this._isActive() && this.__send(operation);
+  _onUserSelectionChange(message) {
+    this._isActive() && this._send(message);
   }
 
-  __send(operation) {
-    operation.userId = this._id;
-    operation.username = this.username;
-    this.dispatchEvent(new CustomEvent('update', { detail: JSON.stringify(operation) }));
+  _send(message) {
+    message.userId = this._id;
+    message.username = this.username;
+    this.dispatchEvent(new CustomEvent(
+      'update', { detail: JSON.stringify(message) }));
   }
 
-  receive(operation) {
-    operation = JSON.parse(operation);
+  receive(message) {
+    message = JSON.parse(message);
 
-    if (this._isActive() && operation.userId === this._id) {
+    if (this._isActive() && message.userId === this._id) {
       return;
     }
-    switch (operation.type) {
+    switch (message.type) {
 
       case 'request-join':
-        this._joinRequested(operation);
+        this._joinRequested(message);
         break;
       case 'join':
-        this._joinSession(operation);
+        this._joinMessageReceived(message);
         break;
 
       case 'insert':
       case 'delete':
-        this._remoteOperationReceived(operation);
+        this._remoteOperationReceived(message);
         break;
 
       case 'caret':
-        this._isActive() && this._doExecute(operation);
+        this._isActive() && this._doExecute(message);
         break;
 
       default:
-        throw new Error(`Unhandled message type ${operation.type}`);
+        throw new Error(`Unhandled message type ${message.type}`);
     }
   }
 }

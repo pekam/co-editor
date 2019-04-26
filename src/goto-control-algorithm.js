@@ -3,7 +3,8 @@
  * GOTO (General Operational Transformation Optimized) algorithm.
  * As a side effect modifies the log.
  * 
- * @param {Object} op a causally ready operation, state vector timestamp stored in its property 'stateVector'
+ * @param {Object} op a causally ready operation, with a state vector timestamp
+ *                    stored in its property 'stateVector'
  * @param {Array} log the log of executed operations (AKA history buffer)
  * @param {Function} it the inclusion transformation function
  * @param {Function} et the exclusion transformation function
@@ -18,7 +19,8 @@ export default function transform(op, log, it, et) {
     return op;
   }
 
-  const dependentOps = log.slice(firstIndependentIndex).filter(oldOp => isDependentOn(oldOp, op));
+  const dependentOps = log.slice(firstIndependentIndex)
+    .filter(oldOp => isDependentOn(oldOp, op));
 
   dependentOps.forEach(depOp => {
     const ind = log.indexOf(depOp);
@@ -30,8 +32,7 @@ export default function transform(op, log, it, et) {
     firstIndependentIndex++;
   });
 
-  return log.slice(firstIndependentIndex).reduce(
-    (transformed, current) => it(transformed, current), op);
+  return log.slice(firstIndependentIndex).reduce(it, op);
 }
 
 function isDependentOn(op1, op2) {

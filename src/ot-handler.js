@@ -42,7 +42,8 @@ export default class OTHandler extends EditorBase {
     this._queue = this._queue.filter(op =>
       op.stateVector[op.userId] > this._stateVector[op.userId]);
 
-    const causallyReadyOpIndex = this._queue.findIndex(op => this.__isCausallyReady(op));
+    const causallyReadyOpIndex = this._queue
+      .findIndex(op => this.__isCausallyReady(op));
     if (causallyReadyOpIndex > -1) {
       const causallyReadyOp = this._queue.splice(causallyReadyOpIndex, 1)[0];
       this._integrateRemoteOperation(causallyReadyOp);
@@ -54,6 +55,7 @@ export default class OTHandler extends EditorBase {
       .filter(id => id !== op.userId.toString())
       .find(id => op.stateVector[id] > (this._stateVector[id] || 0));
 
-    return !clockAhead && (op.stateVector[op.userId] === (this._stateVector[op.userId] || 0) + 1);
+    return !clockAhead &&
+      (op.stateVector[op.userId] === (this._stateVector[op.userId] || 0) + 1);
   }
 }
