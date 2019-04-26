@@ -48,38 +48,18 @@ export default class EditorBase extends HTMLElement {
       // { retain: number, insert: string, delete: number }
       const ops = delta.ops.reduce((acc, op) => Object.assign(acc, op), {});
 
+      // Generate character-wise operation messages
       const index = ops.retain || 0;
-
-      if (ops.delete) {
-        const oldText = oldDelta.ops[0].insert;
-        const deletedText = oldText.substring(index, index + ops.delete);
-
-        [...deletedText].forEach(char => this._onUserInput({
-          type: 'delete',
-          index: index,
-          length: 1,
-          text: char
-        }));
-        // this._onUserInput({
-        //   type: 'delete',
-        //   index: index,
-        //   length: deletedText.length,
-        //   text: deletedText
-        // });
-      }
-
-      if (ops.insert) {
-        [...ops.insert].forEach((char, i) => this._onUserInput({
-          type: 'insert',
-          index: index + i,
-          text: char
-        }));
-        // this._onUserInput({
-        //   type: 'insert',
-        //   index: index,
-        //   text: ops.insert
-        // });
-      }
+      ops.delete && [...Array(ops.delete)].forEach(_ => this._onUserInput({
+        type: 'delete',
+        index,
+        length: 1
+      }));
+      ops.insert && [...ops.insert].forEach((c, i) => this._onUserInput({
+        type: 'insert',
+        index: index + i,
+        text: c
+      }));
     }.bind(this));
   }
 
@@ -116,10 +96,9 @@ export default class EditorBase extends HTMLElement {
         break;
 
       case 'delete':
-        if (op.disabledBy && op.disabledBy.length)
+        if (op.disabledBy && op.disabledBy.length) {
           return;
-        // op.text might have become incorrect because of transformations
-        op.text = this.value.substring(op.index, op.length);
+        }
 
         this._quill.deleteText(op.index, op.length);
         this.__updateCaret(op.userId, op.username, op.index, 0);
@@ -132,7 +111,7 @@ export default class EditorBase extends HTMLElement {
   }
 
   __updateCaret(id, username, index, length) {
-    const range = { index: index, length: length };
+    const range = { index, length };
     if (!this.__caretData[id]) {
       this.__addCaret(id, username, range);
     } else if (username !== this.__caretData[id].username) {
@@ -147,7 +126,7 @@ export default class EditorBase extends HTMLElement {
   __addCaret(id, username, range) {
     const color = (this.__caretData[id] && this.__caretData[id].color) || this.__getRandomColor();
     this.__quillCursors.setCursor(id, range, username, color);
-    this.__caretData[id] = { username: username, color: color };
+    this.__caretData[id] = { username, color };
   }
 
   __getRandomColor() {

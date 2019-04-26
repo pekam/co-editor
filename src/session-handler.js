@@ -8,25 +8,17 @@ export default class SessionHandler extends OTHandler {
     this._disable();
   }
 
-  _isActive() {
-    return this._master || this._joined;
-  }
-
-  _generateId() {
-    return this._nextId++;
-  }
-
   initSession() {
     this._master = true;
     this._nextId = 0;
-    this._id = this._generateId();
+    this._id = this.__generateId();
     this._stateVector[this._id] = 0;
     this._enable();
   }
 
   joinSession() {
     this.__tmpId = generateUUID();
-    this.__send({
+    this._send({
       type: 'request-join',
       tmpId: this.__tmpId
     });
@@ -36,7 +28,7 @@ export default class SessionHandler extends OTHandler {
     if (!this._master) {
       return;
     }
-    const id = this._generateId();
+    const id = this.__generateId();
     this._stateVector[id] = 0;
 
     const joinMessage = {
@@ -45,12 +37,12 @@ export default class SessionHandler extends OTHandler {
       id: id,
       stateVector: Object.assign({}, this._stateVector),
       text: this.value
-      // TODO: include caret positions?
+      // TODO: include caret positions
     };
-    this.__send(joinMessage);
+    this._send(joinMessage);
   }
 
-  _joinSession(message) {
+  _joinMessageReceived(message) {
     if (this._isActive() || message.tmpId !== this.__tmpId) {
       return;
     }
@@ -62,6 +54,14 @@ export default class SessionHandler extends OTHandler {
 
     this._joined = true;
     this._checkQueue();
+  }
+
+  _isActive() {
+    return this._master || this._joined;
+  }
+
+  __generateId() {
+    return this._nextId++;
   }
 }
 
