@@ -57,6 +57,9 @@ class CoEditor extends SessionHandler {
       default:
         throw new Error(`Unhandled message type ${message.type}`);
     }
+    if (message.stateVector && message.userId) {
+      this._garbageCollectLog(message);
+    }
   }
 }
 customElements.define('co-editor', CoEditor);
