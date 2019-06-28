@@ -60,7 +60,7 @@ export default class OTHandler extends EditorBase {
     const minStateVector = Object.values(this._stateVectorTable).reduce((msv, sv) => {
       keySet.forEach(key => {
         const value = sv[key] || 0;
-        if (!msv[key] || msv[key] > value) {
+        if (msv[key] === undefined || msv[key] > value) {
           msv[key] = value;
         }
       });
