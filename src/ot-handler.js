@@ -53,7 +53,9 @@ export default class OTHandler extends EditorBase {
 
   _garbageCollectLog(message) {
     this._stateVectorTable[message.userId] = message.stateVector;
-    this._stateVectorTable[this._id] = this._stateVector;
+    if (this._isActive()) {
+      this._stateVectorTable[this._id] = this._stateVector;
+    }
 
     const keySet = new Set(...Object.values(this._stateVectorTable).map(Object.keys));
 
