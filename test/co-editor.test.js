@@ -13,6 +13,8 @@ describe('<co-editor>', () => {
   let parent;
   let delay;
 
+  let ops1, ops2 // used to cache operations and flush them later
+
   beforeEach(async () => {
     delay = undefined;
     parent = await fixture(html`
@@ -25,11 +27,30 @@ describe('<co-editor>', () => {
     second = parent.querySelector("#two");
     allClients = [first, second];
     first.initSession();
+    ops1 = [];
+    ops2 = [];
   });
 
   const connectClients = (clients = allClients) =>
     clients.forEach(client => client.addEventListener('update', e =>
       clients.forEach(otherClient => client !== otherClient && sendTo(e.detail, otherClient))));
+
+  const connectClientsWithCaching = () => {
+    first.addEventListener('update', e => {
+      if (e.detail.includes('join')) {
+        second.receive(e.detail);
+      } else {
+        ops1.push(e.detail);
+      }
+    });
+    second.addEventListener('update', e => {
+      if (e.detail.includes('join')) {
+        first.receive(e.detail);
+      } else {
+        ops2.push(e.detail);
+      }
+    });
+  }
 
   const addClient = () => {
     const client = document.createElement('co-editor');
@@ -192,25 +213,8 @@ describe('<co-editor>', () => {
 
       describe('causality preservation', function () {
 
-        let ops1, ops2;
-
         beforeEach(() => {
-          ops1 = [];
-          ops2 = [];
-          first.addEventListener('update', e => {
-            if (e.detail.includes('join')) {
-              second.receive(e.detail);
-            } else {
-              ops1.push(e.detail);
-            }
-          });
-          second.addEventListener('update', e => {
-            if (e.detail.includes('join')) {
-              first.receive(e.detail);
-            } else {
-              ops2.push(e.detail);
-            }
-          });
+          connectClientsWithCaching();
           second.joinSession();
         });
 
