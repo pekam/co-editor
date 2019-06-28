@@ -412,4 +412,52 @@ describe('<co-editor>', () => {
       });
     });
   });
+
+  describe('garbage collecting', () => {
+
+    const expectLogInserts = (editor, expected) => {
+      expect(editor._log.map(op => op.text)).to.eql(expected);
+    }
+
+    beforeEach(() => {
+      connectClientsWithCaching();
+      second.joinSession();
+      insertText(first, 0, 'a');
+    });
+
+    it('should save local op in log', () => {
+      expectLogInserts(first, ['a']);
+    });
+
+    it('should clear received op from log as integrated by all', () => {
+      second.receive(ops1[0]);
+      expectLogInserts(second, []);
+    });
+
+    it('should clear local op from log after getting later update from other', () => {
+      second.receive(ops1[0]);
+      insertText(second, 1, '_');
+      first.receive(ops2[0]);
+      expectLogInserts(first, []);
+    });
+
+    it('should keep local ops not yet integrated by other', () => {
+      insertText(first, 1, 'b');
+      second.receive(ops1[0]);
+      insertText(second, 1, '_');
+      first.receive(ops2[0]);
+      // op from second is not cleared as garbage collector checks only from the start of the log
+      expectLogInserts(first, ['b', '_']);
+    });
+
+    it('should clear all local ops integrated by other', () => {
+      insertText(first, 1, 'bcd');
+      second.receive(ops1[0]);
+      second.receive(ops1[1]);
+      second.receive(ops1[2]);
+      insertText(second, 1, '_');
+      first.receive(ops2[0]);
+      expectLogInserts(first, ['d', '_']);
+    });
+  });
 });
