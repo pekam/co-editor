@@ -29,6 +29,8 @@ This produces a minified bundle at `/dist/co-editor.min.js`
 
 ## Background
 
+A detailed description of the motivation behind this project, as well as its design and implementation, can be read in my master's thesis ["A Web Component for Real-Time Collaborative Text Editing"](https://www.utupub.fi/handle/10024/147305).
+
 #### Web Components
 
 Web components are reusable custom HTML elements which encapsulate their content and styles inside a shadow DOM.
