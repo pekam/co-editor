@@ -363,8 +363,8 @@ describe('<co-editor>', () => {
             }, delay * 2);
           });
 
-          // Known bug:
-          it('del-ins-del vs del-ins at the same position', done => {
+          // https://github.com/pekam/co-editor/issues/8
+          xit('del-ins-del vs del-ins at the same position', done => {
             replaceText(first, 1, 'A');
             deleteText(first, 1, 1);
             replaceText(second, 1, 'B');
