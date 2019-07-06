@@ -10,12 +10,16 @@ export default class OTHandler extends EditorBase {
     this._stateVector = {};
     this._queue = [];
     this._stateVectorTable = {};
+
+    this.__stateMessageThreshold = 10;
+    this.__remoteOpsAfterLastLocal = 0;
   }
 
   _onUserInput(op) {
     this._stateVector[this._id]++;
     op.stateVector = Object.assign({}, this._stateVector);
     this._log.push(op);
+    this.__remoteOpsAfterLastLocal = 0;
   }
 
   _remoteOperationReceived(op) {
@@ -23,6 +27,13 @@ export default class OTHandler extends EditorBase {
       this._integrateRemoteOperation(op);
     } else {
       this._queue.push(op);
+    }
+
+    this._garbageCollectLog(op);
+    this.__remoteOpsAfterLastLocal++;
+    if (this._isActive() && this.__remoteOpsAfterLastLocal >= this.__stateMessageThreshold) {
+      this.__sendStateMessage();
+      this.__remoteOpsAfterLastLocal = 0;
     }
   }
 
@@ -86,5 +97,12 @@ export default class OTHandler extends EditorBase {
 
     return !clockAhead &&
       (op.stateVector[op.userId] === (this._stateVector[op.userId] || 0) + 1);
+  }
+
+  __sendStateMessage() {
+    this._send({
+      type: 'state',
+      stateVector: Object.assign({}, this._stateVector)
+    });
   }
 }

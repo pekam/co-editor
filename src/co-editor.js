@@ -47,6 +47,7 @@ class CoEditor extends SessionHandler {
 
       case 'insert':
       case 'delete':
+      case 'state':
         this._remoteOperationReceived(message);
         break;
 
@@ -56,9 +57,6 @@ class CoEditor extends SessionHandler {
 
       default:
         throw new Error(`Unhandled message type ${message.type}`);
-    }
-    if (message.stateVector && message.userId !== undefined) {
-      this._garbageCollectLog(message);
     }
   }
 }
